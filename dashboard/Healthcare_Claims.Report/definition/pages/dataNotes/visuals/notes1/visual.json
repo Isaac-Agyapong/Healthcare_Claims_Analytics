@@ -24,7 +24,7 @@
               {
                 "textRuns": [
                   {
-                    "value": "\u2022  50,000 synthetic claims (2024-2025), 8,000 patients, 250 providers",
+                    "value": "•  50,000 synthetic claims (2024-2025), 8,000 patients, 250 providers",
                     "textStyle": {
                       "fontSize": "13pt",
                       "color": "#EAF1FB"
@@ -35,7 +35,7 @@
               {
                 "textRuns": [
                   {
-                    "value": "\u2022  Generated in Python with real-world patterns: seasonality, network effects, a prior-auth policy change and three problem providers",
+                    "value": "•  Generated in Python with real-world patterns: seasonality, network effects, a prior-auth policy change and three problem providers",
                     "textStyle": {
                       "fontSize": "13pt",
                       "color": "#EAF1FB"
@@ -46,7 +46,7 @@
               {
                 "textRuns": [
                   {
-                    "value": "\u2022  Raw export deliberately messy (duplicates, mixed date formats, missing values); cleaned in Python",
+                    "value": "•  Raw export deliberately messy (duplicates, mixed date formats, missing values); cleaned in Python",
                     "textStyle": {
                       "fontSize": "13pt",
                       "color": "#EAF1FB"
@@ -57,7 +57,7 @@
               {
                 "textRuns": [
                   {
-                    "value": "\u2022  No real patient information is used",
+                    "value": "•  No real patient information is used",
                     "textStyle": {
                       "fontSize": "13pt",
                       "color": "#EAF1FB"

@@ -1,0 +1,556 @@
+cultureInfo en-US
+
+	linguisticMetadata =
+			{
+			  "Version": "2.0.0",
+			  "Language": "en-US",
+			  "Entities": {
+			    "claims_clean.denial_rate_complete": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "claims_clean",
+			          "ConceptualProperty": "Denial Rate (complete)"
+			        }
+			      },
+			      "State": "Generated",
+			      "Terms": [
+			        {
+			          "Denial rate": {
+			            "State": "Suggested",
+			            "Source": {
+			              "Type": "External",
+			              "Agent": "PowerBI.VisualColumnRename"
+			            },
+			            "Weight": 0.9
+			          }
+			        }
+			      ]
+			    },
+			    "claims_clean.total_claims": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "claims_clean",
+			          "ConceptualProperty": "Total Claims"
+			        }
+			      },
+			      "State": "Generated",
+			      "Terms": [
+			        {
+			          "Claims": {
+			            "State": "Suggested",
+			            "Source": {
+			              "Type": "External",
+			              "Agent": "PowerBI.VisualColumnRename"
+			            },
+			            "Weight": 0.9
+			          }
+			        }
+			      ]
+			    },
+			    "claims_clean.total_paid": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "claims_clean",
+			          "ConceptualProperty": "Total Paid"
+			        }
+			      },
+			      "State": "Generated",
+			      "Terms": [
+			        {
+			          "Paid": {
+			            "State": "Suggested",
+			            "Source": {
+			              "Type": "External",
+			              "Agent": "PowerBI.VisualColumnRename"
+			            },
+			            "Weight": 0.9
+			          }
+			        }
+			      ]
+			    },
+			    "claims_clean.denial_rate": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "claims_clean",
+			          "ConceptualProperty": "Denial Rate"
+			        }
+			      },
+			      "State": "Generated",
+			      "Terms": [
+			        {
+			          "Denial rate": {
+			            "State": "Suggested",
+			            "Source": {
+			              "Type": "External",
+			              "Agent": "PowerBI.VisualColumnRename"
+			            },
+			            "Weight": 0.9
+			          }
+			        }
+			      ]
+			    },
+			    "claims_clean.denied_billed_": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "claims_clean",
+			          "ConceptualProperty": "Denied Billed $"
+			        }
+			      },
+			      "State": "Generated",
+			      "Terms": [
+			        {
+			          "Billed charges denied": {
+			            "State": "Suggested",
+			            "Source": {
+			              "Type": "External",
+			              "Agent": "PowerBI.VisualColumnRename"
+			            },
+			            "Weight": 0.9
+			          }
+			        },
+			        {
+			          "Denied billed $": {
+			            "State": "Suggested",
+			            "Source": {
+			              "Type": "External",
+			              "Agent": "PowerBI.VisualColumnRename"
+			            },
+			            "Weight": 0.9
+			          }
+			        },
+			        {
+			          "Denied $": {
+			            "State": "Suggested",
+			            "Source": {
+			              "Type": "External",
+			              "Agent": "PowerBI.VisualColumnRename"
+			            },
+			            "Weight": 0.9
+			          }
+			        }
+			      ]
+			    },
+			    "claims_clean.avg_days_to_process": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "claims_clean",
+			          "ConceptualProperty": "Avg Days to Process"
+			        }
+			      },
+			      "State": "Generated",
+			      "Terms": [
+			        {
+			          "Avg days to decision": {
+			            "State": "Suggested",
+			            "Source": {
+			              "Type": "External",
+			              "Agent": "PowerBI.VisualColumnRename"
+			            },
+			            "Weight": 0.9
+			          }
+			        }
+			      ]
+			    },
+			    "claims_clean.denial_reason": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "claims_clean",
+			          "ConceptualProperty": "denial_reason"
+			        }
+			      },
+			      "State": "Generated",
+			      "Terms": [
+			        {
+			          "Denial reason": {
+			            "State": "Suggested",
+			            "Source": {
+			              "Type": "External",
+			              "Agent": "PowerBI.VisualColumnRename"
+			            },
+			            "Weight": 0.9
+			          }
+			        }
+			      ]
+			    },
+			    "claims_clean.claim_status": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "claims_clean",
+			          "ConceptualProperty": "claim_status"
+			        }
+			      },
+			      "State": "Generated",
+			      "Terms": [
+			        {
+			          "Claim status": {
+			            "State": "Suggested",
+			            "Source": {
+			              "Type": "External",
+			              "Agent": "PowerBI.VisualColumnRename"
+			            },
+			            "Weight": 0.9
+			          }
+			        }
+			      ]
+			    },
+			    "claims_clean.prior_auth_denials_2025": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "claims_clean",
+			          "ConceptualProperty": "Prior Auth Denials 2025"
+			        }
+			      },
+			      "State": "Generated",
+			      "Terms": [
+			        {
+			          "Prior-auth denials, 2025": {
+			            "State": "Suggested",
+			            "Source": {
+			              "Type": "External",
+			              "Agent": "PowerBI.VisualColumnRename"
+			            },
+			            "Weight": 0.9
+			          }
+			        }
+			      ]
+			    },
+			    "claims_clean.prior_auth_yoy_": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "claims_clean",
+			          "ConceptualProperty": "Prior Auth YoY %"
+			        }
+			      },
+			      "State": "Generated",
+			      "Terms": [
+			        {
+			          "Change from 2024": {
+			            "State": "Suggested",
+			            "Source": {
+			              "Type": "External",
+			              "Agent": "PowerBI.VisualColumnRename"
+			            },
+			            "Weight": 0.9
+			          }
+			        }
+			      ]
+			    },
+			    "claims_clean.outofnetwork_denial_rate": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "claims_clean",
+			          "ConceptualProperty": "Out-of-Network Denial Rate"
+			        }
+			      },
+			      "State": "Generated",
+			      "Terms": [
+			        {
+			          "Out-of-network denial rate": {
+			            "State": "Suggested",
+			            "Source": {
+			              "Type": "External",
+			              "Agent": "PowerBI.VisualColumnRename"
+			            },
+			            "Weight": 0.9
+			          }
+			        }
+			      ]
+			    },
+			    "claims_clean.prior_auth_denials": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "claims_clean",
+			          "ConceptualProperty": "Prior Auth Denials"
+			        }
+			      },
+			      "State": "Generated",
+			      "Terms": [
+			        {
+			          "Prior-auth denials": {
+			            "State": "Suggested",
+			            "Source": {
+			              "Type": "External",
+			              "Agent": "PowerBI.VisualColumnRename"
+			            },
+			            "Weight": 0.9
+			          }
+			        }
+			      ]
+			    },
+			    "claims_clean.denials_2024": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "claims_clean",
+			          "ConceptualProperty": "Denials 2024"
+			        }
+			      },
+			      "State": "Generated",
+			      "Terms": [
+			        {
+			          "2024": {
+			            "State": "Suggested",
+			            "Source": {
+			              "Type": "External",
+			              "Agent": "PowerBI.VisualColumnRename"
+			            },
+			            "Weight": 0.9
+			          }
+			        }
+			      ]
+			    },
+			    "claims_clean.denials_2025": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "claims_clean",
+			          "ConceptualProperty": "Denials 2025"
+			        }
+			      },
+			      "State": "Generated",
+			      "Terms": [
+			        {
+			          "2025": {
+			            "State": "Suggested",
+			            "Source": {
+			              "Type": "External",
+			              "Agent": "PowerBI.VisualColumnRename"
+			            },
+			            "Weight": 0.9
+			          }
+			        }
+			      ]
+			    },
+			    "claims_clean.denials_yoy_": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "claims_clean",
+			          "ConceptualProperty": "Denials YoY %"
+			        }
+			      },
+			      "State": "Generated",
+			      "Terms": [
+			        {
+			          "Change": {
+			            "State": "Suggested",
+			            "Source": {
+			              "Type": "External",
+			              "Agent": "PowerBI.VisualColumnRename"
+			            },
+			            "Weight": 0.9
+			          }
+			        }
+			      ]
+			    },
+			    "claims_clean.flagged_providers": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "claims_clean",
+			          "ConceptualProperty": "Flagged Providers"
+			        }
+			      },
+			      "State": "Generated",
+			      "Terms": [
+			        {
+			          "Providers flagged": {
+			            "State": "Suggested",
+			            "Source": {
+			              "Type": "External",
+			              "Agent": "PowerBI.VisualColumnRename"
+			            },
+			            "Weight": 0.9
+			          }
+			        }
+			      ]
+			    },
+			    "claims_clean.flagged_denied_": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "claims_clean",
+			          "ConceptualProperty": "Flagged Denied $"
+			        }
+			      },
+			      "State": "Generated",
+			      "Terms": [
+			        {
+			          "Billed charges denied at flagged providers": {
+			            "State": "Suggested",
+			            "Source": {
+			              "Type": "External",
+			              "Agent": "PowerBI.VisualColumnRename"
+			            },
+			            "Weight": 0.9
+			          }
+			        }
+			      ]
+			    },
+			    "claims_clean.flagged_coding_share": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "claims_clean",
+			          "ConceptualProperty": "Flagged Coding Share"
+			        }
+			      },
+			      "State": "Generated",
+			      "Terms": [
+			        {
+			          "of their denials are coding or duplicate errors": {
+			            "State": "Suggested",
+			            "Source": {
+			              "Type": "External",
+			              "Agent": "PowerBI.VisualColumnRename"
+			            },
+			            "Weight": 0.9
+			          }
+			        }
+			      ]
+			    },
+			    "claims_clean.peer_denial_rate": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "claims_clean",
+			          "ConceptualProperty": "Peer Denial Rate"
+			        }
+			      },
+			      "State": "Generated",
+			      "Terms": [
+			        {
+			          "Peer rate": {
+			            "State": "Suggested",
+			            "Source": {
+			              "Type": "External",
+			              "Agent": "PowerBI.VisualColumnRename"
+			            },
+			            "Weight": 0.9
+			          }
+			        }
+			      ]
+			    },
+			    "claims_clean.excess_denial_pts": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "claims_clean",
+			          "ConceptualProperty": "Excess Denial (pts)"
+			        }
+			      },
+			      "State": "Generated",
+			      "Terms": [
+			        {
+			          "Pts above peers": {
+			            "State": "Suggested",
+			            "Source": {
+			              "Type": "External",
+			              "Agent": "PowerBI.VisualColumnRename"
+			            },
+			            "Weight": 0.9
+			          }
+			        }
+			      ]
+			    },
+			    "claims_clean.top_10_excess_pts": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "claims_clean",
+			          "ConceptualProperty": "Top 10 Excess (pts)"
+			        }
+			      },
+			      "State": "Generated",
+			      "Terms": [
+			        {
+			          "Points above peers": {
+			            "State": "Suggested",
+			            "Source": {
+			              "Type": "External",
+			              "Agent": "PowerBI.VisualColumnRename"
+			            },
+			            "Weight": 0.9
+			          }
+			        }
+			      ]
+			    },
+			    "patients_clean.plan_type": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "patients_clean",
+			          "ConceptualProperty": "plan_type"
+			        }
+			      },
+			      "State": "Generated",
+			      "Terms": [
+			        {
+			          "Plan type": {
+			            "State": "Suggested",
+			            "Source": {
+			              "Type": "External",
+			              "Agent": "PowerBI.VisualColumnRename"
+			            },
+			            "Weight": 0.9
+			          }
+			        }
+			      ]
+			    },
+			    "providers_clean.network_status": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "providers_clean",
+			          "ConceptualProperty": "network_status"
+			        }
+			      },
+			      "State": "Generated",
+			      "Terms": [
+			        {
+			          "Network": {
+			            "State": "Suggested",
+			            "Source": {
+			              "Type": "External",
+			              "Agent": "PowerBI.VisualColumnRename"
+			            },
+			            "Weight": 0.9
+			          }
+			        }
+			      ]
+			    },
+			    "providers_clean.provider_name": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "providers_clean",
+			          "ConceptualProperty": "provider_name"
+			        }
+			      },
+			      "State": "Generated",
+			      "Terms": [
+			        {
+			          "Provider": {
+			            "State": "Suggested",
+			            "Source": {
+			              "Type": "External",
+			              "Agent": "PowerBI.VisualColumnRename"
+			            },
+			            "Weight": 0.9
+			          }
+			        }
+			      ]
+			    },
+			    "providers_clean.specialty": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "providers_clean",
+			          "ConceptualProperty": "specialty"
+			        }
+			      },
+			      "State": "Generated",
+			      "Terms": [
+			        {
+			          "Specialty": {
+			            "State": "Suggested",
+			            "Source": {
+			              "Type": "External",
+			              "Agent": "PowerBI.VisualColumnRename"
+			            },
+			            "Weight": 0.9
+			          }
+			        }
+			      ]
+			    }
+			  }
+			}
+		contentType: json
+

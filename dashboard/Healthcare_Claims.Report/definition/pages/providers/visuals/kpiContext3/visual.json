@@ -1,6 +1,14 @@
 {
-  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/1.4.0/schema.json",
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.12.0/schema.json",
   "name": "kpiContext3",
+  "position": {
+    "x": 862,
+    "y": 222,
+    "z": 18000,
+    "height": 28,
+    "width": 391,
+    "tabOrder": 18000
+  },
   "visual": {
     "visualType": "card",
     "query": {
@@ -19,8 +27,7 @@
                 }
               },
               "queryRef": "claims_clean.KPI Coding Context",
-              "nativeQueryRef": "KPI Coding Context",
-              "displayName": ""
+              "nativeQueryRef": "KPI Coding Context"
             }
           ]
         }
@@ -140,13 +147,5 @@
       ]
     },
     "drillFilterOtherVisuals": true
-  },
-  "position": {
-    "x": 862,
-    "y": 222,
-    "z": 18000,
-    "height": 28,
-    "width": 391,
-    "tabOrder": 18000
   }
 }

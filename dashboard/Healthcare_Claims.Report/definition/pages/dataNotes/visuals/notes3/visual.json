@@ -24,7 +24,7 @@
               {
                 "textRuns": [
                   {
-                    "value": "\u2022  Synthetic data: patterns are realistic but the numbers are not real",
+                    "value": "•  Synthetic data: patterns are realistic but the numbers are not real",
                     "textStyle": {
                       "fontSize": "13pt",
                       "color": "#EAF1FB"
@@ -35,7 +35,7 @@
               {
                 "textRuns": [
                   {
-                    "value": "\u2022  December 2025 is mostly pending, so trend charts stop at November",
+                    "value": "•  December 2025 is mostly pending, so trend charts stop at November",
                     "textStyle": {
                       "fontSize": "13pt",
                       "color": "#EAF1FB"
@@ -46,7 +46,7 @@
               {
                 "textRuns": [
                   {
-                    "value": "\u2022  Denied charges are billed amounts, not the amount a payer would have paid",
+                    "value": "•  Denied charges are billed amounts, not the amount a payer would have paid",
                     "textStyle": {
                       "fontSize": "13pt",
                       "color": "#EAF1FB"
@@ -57,7 +57,7 @@
               {
                 "textRuns": [
                   {
-                    "value": "\u2022  A flag is a reason to review billing, not proof of wrongdoing",
+                    "value": "•  A flag is a reason to review billing, not proof of wrongdoing",
                     "textStyle": {
                       "fontSize": "13pt",
                       "color": "#EAF1FB"

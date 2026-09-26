@@ -1,0 +1,11 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/gitIntegration/platformProperties/2.0.0/schema.json",
+  "metadata": {
+    "type": "SemanticModel",
+    "displayName": "Healthcare_Claims"
+  },
+  "config": {
+    "version": "2.0",
+    "logicalId": "00d71024-a608-40fd-9e2b-b9ea656b2e5a"
+  }
+}

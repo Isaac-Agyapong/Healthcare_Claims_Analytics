@@ -2,3 +2,4 @@ expression DataFolder = "D:\Projects\Healthcare_Claims_Analytics\Data\clean\" me
 	lineageTag: 5ad59749-d19f-55f9-8f67-a84551a5689e
 
 	annotation PBI_ResultType = Text
+

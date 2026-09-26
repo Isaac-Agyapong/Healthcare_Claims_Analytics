@@ -4,10 +4,10 @@ table DimDate
 
 	column Date
 		dataType: dateTime
+		isKey
 		formatString: yyyy-mm-dd
 		lineageTag: d72c33ac-06fc-5015-8c54-7d620b9c65f8
 		summarizeBy: none
-		isKey
 		isNameInferred
 		sourceColumn: [Date]
 
@@ -40,17 +40,17 @@ table DimDate
 		lineageTag: a85a6bc1-a789-5d47-9134-f0b0b6c0b60e
 		summarizeBy: none
 		isNameInferred
-		sortByColumn: 'Month Sort'
 		sourceColumn: [Month]
+		sortByColumn: 'Month Sort'
 
 		annotation SummarizationSetBy = Automatic
 
 	column 'Month Sort'
 		dataType: int64
+		isHidden
 		formatString: 0
 		lineageTag: 40e0f74c-6a2d-53df-a97a-c4079950f6e7
 		summarizeBy: none
-		isHidden
 		isNameInferred
 		sourceColumn: [Month Sort]
 
@@ -70,17 +70,17 @@ table DimDate
 		lineageTag: 5efe98d4-b7c6-5bc8-aeda-ae29d68f7cd1
 		summarizeBy: none
 		isNameInferred
-		sortByColumn: 'Quarter Sort'
 		sourceColumn: [Quarter Label]
+		sortByColumn: 'Quarter Sort'
 
 		annotation SummarizationSetBy = Automatic
 
 	column 'Quarter Sort'
 		dataType: int64
+		isHidden
 		formatString: 0
 		lineageTag: 0cb32236-f5c5-5549-904c-15764a7d82e1
 		summarizeBy: none
-		isHidden
 		isNameInferred
 		sourceColumn: [Quarter Sort]
 
@@ -99,3 +99,4 @@ table DimDate
 				    "Quarter Label", YEAR ( [Date] ) & " Q" & QUARTER ( [Date] ),
 				    "Quarter Sort", YEAR ( [Date] ) * 10 + QUARTER ( [Date] )
 				)
+
