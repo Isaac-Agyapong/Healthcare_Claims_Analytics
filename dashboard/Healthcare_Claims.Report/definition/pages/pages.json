@@ -1,9 +1,10 @@
 {
   "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/pagesMetadata/1.0.0/schema.json",
   "pageOrder": [
-    "executiveOverview",
-    "denialDeepDive",
-    "providerScorecard"
+    "overview",
+    "denials",
+    "providers",
+    "dataNotes"
   ],
-  "activePageName": "executiveOverview"
+  "activePageName": "overview"
 }

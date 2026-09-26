@@ -3,7 +3,7 @@
 End-to-end data analysis of **50,000 health-insurance claims (2024–2025)** using **Python, SQL, Excel and Power BI**.
 The project finds why claims are denied, which providers and plans drive the problem, and how much money is at stake.
 
-![Excel dashboard](Image/excel_dashboard.png)
+![Power BI dashboard](Image/powerbi_page1.png)
 
 ---
 
@@ -45,7 +45,7 @@ They asked four questions:
 | Exploratory analysis | Python (matplotlib) | [`02_exploratory_analysis.ipynb`](Python/02_exploratory_analysis.ipynb): 7 charts and findings |
 | Database and analysis | SQL (SQLite) | [`SQL/`](SQL/): star schema, data-quality checks, 13 business queries → [results](SQL/query_results.md) |
 | Spreadsheet model | Excel | [`Excel/Healthcare_Claims_Analysis.xlsx`](Excel/Healthcare_Claims_Analysis.xlsx): formula-driven dashboard, provider scorecard, conditional formatting |
-| BI dashboard | Power BI (DAX, TMDL, PBIR) | [`dashboard/`](dashboard/): 3-page interactive report saved as a Power BI Project |
+| BI dashboard | Power BI (DAX, TMDL, PBIR) | [`dashboard/`](dashboard/): 4-page interactive report saved as a Power BI Project, generated from code |
 
 **SQL skills shown:** multi-table JOINs, CTEs, CASE, conditional aggregation, window functions
 (`LAG`, `SUM() OVER`, `AVG() OVER (PARTITION BY)`, `ROW_NUMBER`, `DENSE_RANK`, `NTILE`), and a median calculated without a MEDIAN function.
@@ -66,18 +66,30 @@ They asked four questions:
 
 ## Power BI dashboard
 
-Saved as a **Power BI Project (`.pbip`)**, so the data model (TMDL) and every visual (PBIR JSON) can be read
-directly on GitHub. Star schema, 22 DAX measures, 3 pages. Details are in [`dashboard/POWER_BI_GUIDE.md`](dashboard/POWER_BI_GUIDE.md).
+A 4-page report saved as a **Power BI Project (`.pbip`)** and generated from code
+([`Python/build_powerbi_project.py`](Python/build_powerbi_project.py)), so the model (TMDL), every visual (PBIR JSON)
+and all 44 DAX measures can be read on GitHub.
 
-**Executive Overview**
-![Executive overview](Image/powerbi_page1.png)
+**Design choices**
+- Navy top bar with page navigation, a headline sentence on every page that states the finding, and KPI cards with a context line.
+- One colour, one meaning: **blue** = claims and payments, **crimson** = denials and revenue at risk,
+  **amber** = flagged providers, grey = everything else.
+- Year and plan-type filters on every analysis page; rankings are protected from cross-filtering so they always rank all providers.
 
-**Denial Deep Dive**
-![Denial deep dive](Image/powerbi_page2.png)
+**Executive summary**: KPIs, quarterly denial rate, denied dollars by reason, claim status
+![Executive summary](Image/powerbi_page1.png)
 
-**Provider Scorecard**: orange bars are providers 10+ points above their peer group
+**Denial drivers**: prior-auth denials by quarter, plan × network denial rates, denials by reason 2024 vs 2025
+![Denial drivers](Image/powerbi_page2.png)
+
+**Provider scorecard**: providers ranked by points above their peer group (amber = 10+ points)
 ![Provider scorecard](Image/powerbi_page3.png)
 
+**Data notes**
+![Data notes](Image/powerbi_page4.png)
+
+**Excel version** of the dashboard (formula-driven):
+![Excel dashboard](Image/excel_dashboard.png)
 To open: `dashboard/Healthcare_Claims.pbip` in Power BI Desktop. If you cloned to a different folder,
 set the `DataFolder` parameter (**Transform data → Edit parameters**) to your `Data\clean\` path, then **Refresh**.
 

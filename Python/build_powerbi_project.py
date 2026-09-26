@@ -10,6 +10,8 @@ the .pbip, click Refresh to load the data.
 """
 import json
 import shutil
+import subprocess
+import sys
 import uuid
 from pathlib import Path
 
@@ -35,7 +37,8 @@ BASE_THEME_SRC = Path(r"C:\Program Files\WindowsApps\Microsoft.MicrosoftPowerBID
                       r"\bin\WebView2Resources\minerva\sharedresources\BaseThemes") / f"{BASE_THEME}.json"
 CUSTOM_THEME = "ClaimsPortfolioTheme.json"
 
-BLUE, ORANGE, AQUA, GREY = "#2A78D6", "#EB6834", "#1BAF7A", "#C3C2B7"
+# PALETTE-V2: blue = claims / paid, crimson = denials, amber = flagged providers, slate/grey = neutral
+BLUE, CRIMSON, AMBER, SLATE, GREY = "#2F6DB5", "#C0392B", "#C98A12", "#5B6B7F", "#C9D1DB"
 FACT = "claims_clean"
 
 
@@ -136,7 +139,7 @@ MEASURES = [
     ("Top 10 Excess (pts)",
      "VAR _rank = [Excess Rank]\n"
      "RETURN IF ( NOT ISBLANK ( _rank ) && _rank <= 10, [Excess Denial (pts)] )", "0.0", "Providers"),
-    ("Excess Colour", f'IF ( [Excess Denial (pts)] >= 10, "{ORANGE}", "{GREY}" )', None, "Providers"),
+    ("Excess Colour", f'IF ( [Excess Denial (pts)] >= 10, "{AMBER}", "{GREY}" )', None, "Providers"),
     ("Avg Days to Process", "AVERAGE ( claims_clean[days_to_process] )", "0.0", "Time"),
     ("Prior Auth Denials",
      'CALCULATE ( [Denied Claims], claims_clean[denial_reason] = "Missing prior authorization" )', INT, "Denials"),
@@ -145,6 +148,47 @@ MEASURES = [
     ("Prior Auth Denials 2025", "CALCULATE ( [Prior Auth Denials], DimDate[Year] = 2025 )", INT, "Denials"),
     ("Prior Auth YoY %",
      "DIVIDE ( [Prior Auth Denials 2025] - [Prior Auth Denials 2024], [Prior Auth Denials 2024] )", PCT, "Denials"),
+    ("Denial Rate (complete)",
+     "// December 2025 is left out: most of its claims are still pending\n"
+     "CALCULATE ( [Denial Rate], KEEPFILTERS ( DimDate[Date] < DATE ( 2025, 12, 1 ) ) )", PCT, "Rates"),
+    ("Denied Share of Billed", "DIVIDE ( [Denied Billed $], [Total Billed] )", PCT, "Money"),
+    ("Reason Colour",
+     'IF ( SELECTEDVALUE ( claims_clean[denial_reason] ) = "Missing prior authorization", "#C0392B", "#E6A59E" )',
+     None, "Denials"),
+    ("In-Network Denial Rate", 'CALCULATE ( [Denial Rate], providers_clean[network_status] = "In-Network" )', PCT, "Rates"),
+    ("Out-of-Network Denial Rate", 'CALCULATE ( [Denial Rate], providers_clean[network_status] = "Out-of-Network" )',
+     PCT, "Rates"),
+    ("Denials 2024", "CALCULATE ( [Denied Claims], DimDate[Year] = 2024 )", INT, "Denials"),
+    ("Denials 2025", "CALCULATE ( [Denied Claims], DimDate[Year] = 2025 )", INT, "Denials"),
+    ("Denials YoY %", "DIVIDE ( [Denials 2025] - [Denials 2024], [Denials 2024] )", "+0%;-0%;0%", "Denials"),
+    ("Flagged Providers",
+     "COUNTROWS ( FILTER ( VALUES ( providers_clean[provider_name] ), [Excess Denial (pts)] >= 10 ) )", INT, "Providers"),
+    ("Flagged Denied $",
+     "SUMX ( FILTER ( VALUES ( providers_clean[provider_name] ), [Excess Denial (pts)] >= 10 ), [Denied Billed $] )",
+     MONEY, "Providers"),
+    ("Flagged Coding Share",
+     "VAR _flagged = FILTER ( VALUES ( providers_clean[provider_name] ), [Excess Denial (pts)] >= 10 )\n"
+     "RETURN DIVIDE (\n"
+     '    CALCULATE ( [Denied Claims], _flagged, claims_clean[denial_reason] IN { "Coding error", "Duplicate claim" } ),\n'
+     "    CALCULATE ( [Denied Claims], _flagged ) )", "0%", "Providers"),
+    ("KPI Claims Context",
+     'FORMAT ( [Unique Patients], "#,0" ) & " patients"',
+     None, "Context"),
+    ("KPI Paid Context", 'FORMAT ( [Paid to Billed %], "0%" ) & " of billed charges"', None, "Context"),
+    ("KPI Denial Context",
+     'FORMAT ( [Denied Claims], "#,0" ) & " of " & FORMAT ( [Decided Claims], "#,0" ) & " decided"', None, "Context"),
+    ("KPI Denied Context", 'FORMAT ( [Denied Share of Billed], "0.0%" ) & " of all billed charges"', None, "Context"),
+    ("KPI Days Context",
+     '"denied: " & FORMAT ( CALCULATE ( [Avg Days to Process], claims_clean[claim_status] = "Denied" ), "0" )\n'
+     '    & " days  ·  paid: " & FORMAT ( CALCULATE ( [Avg Days to Process], claims_clean[claim_status] = "Paid" ), "0" )',
+     None, "Context"),
+    ("KPI Prior Auth Context", '"vs " & FORMAT ( [Prior Auth Denials 2024], "#,0" ) & " in 2024"', None, "Context"),
+    ("KPI YoY Context", '"the fastest-growing denial reason"', None, "Context"),
+    ("KPI Network Context", '"vs " & FORMAT ( [In-Network Denial Rate], "0.0%" ) & " in-network"', None, "Context"),
+    ("KPI Flagged Context", '"10+ points above their peers"', None, "Context"),
+    ("KPI Flagged $ Context", 'FORMAT ( DIVIDE ( [Flagged Denied $], [Denied Billed $] ), "0.0%" ) & " of all denied charges"',
+     None, "Context"),
+    ("KPI Coding Context", '"fixable with a claim scrubber and billing training"', None, "Context"),
 ]
 
 DATE_DAX = """ADDCOLUMNS (
@@ -153,7 +197,9 @@ DATE_DAX = """ADDCOLUMNS (
     "Month Number", MONTH ( [Date] ),
     "Month", FORMAT ( [Date], "mmm yyyy" ),
     "Month Sort", YEAR ( [Date] ) * 100 + MONTH ( [Date] ),
-    "Quarter", "Q" & QUARTER ( [Date] )
+    "Quarter", "Q" & QUARTER ( [Date] ),
+    "Quarter Label", YEAR ( [Date] ) & " Q" & QUARTER ( [Date] ),
+    "Quarter Sort", YEAR ( [Date] ) * 10 + QUARTER ( [Date] )
 )"""
 
 
@@ -215,6 +261,9 @@ def date_table_tmdl():
     out.append(column_tmdl(t, "Month", "string", None, "none", "[Month]", ["isNameInferred", "sortByColumn: 'Month Sort'"]))
     out.append(column_tmdl(t, "Month Sort", "int64", "0", "none", "[Month Sort]", ["isHidden", "isNameInferred"]))
     out.append(column_tmdl(t, "Quarter", "string", None, "none", "[Quarter]", ["isNameInferred"]))
+    out.append(column_tmdl(t, "Quarter Label", "string", None, "none", "[Quarter Label]",
+                           ["isNameInferred", "sortByColumn: 'Quarter Sort'"]))
+    out.append(column_tmdl(t, "Quarter Sort", "int64", "0", "none", "[Quarter Sort]", ["isHidden", "isNameInferred"]))
     out += [f"\tpartition {t} = calculated", "\t\tmode: import", "\t\tsource =", indent(DATE_DAX, 4), ""]
     return "\n".join(out)
 
@@ -262,7 +311,20 @@ def build_model():
 
 # =====================================================================
 # Report (PBIR)
+#
+# Visual identity (deliberately different from the opioid project, same quality rules):
+#   * full-width navy top bar with the page navigator in it; no side rail
+#   * left-aligned section label + headline sentence under the bar, filters on the right
+#   * KPI cards with a vertical accent on the left, big number, label and context line
+#   * slate background with a faint diagonal grid; white tiles, 8px corners
+#   * one colour, one meaning: blue = claims / paid, crimson = denials / revenue at risk,
+#     amber = flagged providers, greys = everything else
 # =====================================================================
+NAVY, NAVY_2, SKY = "#14263F", "#23405F", "#4A90D9"
+PAGE_BG, TILE_BORDER, INK, INK_2 = "#EDF1F5", "#D9E0E8", "#111C2B", "#566273"
+TOP = 136                         # content starts under the bar and the headline row
+
+
 def lit(value):
     return {"expr": {"Literal": {"Value": value}}}
 
@@ -271,7 +333,7 @@ def s(text):
     return lit("'" + text.replace("'", "''") + "'")
 
 
-def colour(hex_):
+def solid(hex_):
     return {"solid": {"color": s(hex_)}}
 
 
@@ -288,53 +350,72 @@ def M(prop):
     return (FACT, prop, True)
 
 
+def MN(prop, name):
+    return (FACT, prop, True, name)
+
+
 LABELS = {"plan_type": "Plan type", "network_status": "Network", "claim_type": "Claim type",
-          "provider_name": "Provider", "specialty": "Specialty", "denial_reason": "Denial reason"}
+          "provider_name": "Provider", "specialty": "Specialty", "denial_reason": "Denial reason",
+          "claim_status": "Claim status"}
 
 
 def projections(fields):
     out = []
-    for e, p, m in fields:
+    for e, p, m, *name in fields:
         proj = {"field": field(e, p, m), "queryRef": f"{e}.{p}", "nativeQueryRef": p}
-        if p in LABELS:
+        if name:
+            proj["displayName"] = name[0]
+        elif p in LABELS:
             proj["displayName"] = LABELS[p]
         out.append(proj)
     return {"projections": out}
 
 
-def container_title(text, show=True):
-    props = {"show": lit("true" if show else "false")}
-    if show:
-        props["text"] = s(text)
-    return {"title": [{"properties": props}]}
+def tile(title=None, subtitle=None, background="#FFFFFF", border=True, pad=(12, 10, 14, 14), radius=8):
+    objs = {
+        "background": [{"properties": {"show": lit("true"), "color": solid(background), "transparency": lit("0D")}}],
+        "border": [{"properties": {"show": lit("true" if border else "false"), "color": solid(TILE_BORDER),
+                                   "radius": lit(f"{radius}D")}}],
+        "dropShadow": [{"properties": {"show": lit("false")}}],
+        "padding": [{"properties": {"top": lit(f"{pad[0]}D"), "bottom": lit(f"{pad[1]}D"),
+                                    "left": lit(f"{pad[2]}D"), "right": lit(f"{pad[3]}D")}}],
+        "title": [{"properties": {"show": lit("true" if title else "false"), **({
+            "text": s(title), "fontColor": solid(INK), "fontSize": lit("14D"), "bold": lit("true"),
+            "fontFamily": s("Segoe UI Semibold")} if title else {})}}],
+    }
+    if subtitle:
+        objs["subTitle"] = [{"properties": {"show": lit("true"), "text": s(subtitle), "fontColor": solid(INK_2),
+                                            "fontSize": lit("11D"), "titleWrap": lit("true")}}]
+    return objs
 
 
-class Page:
-    def __init__(self, name, display):
-        self.name, self.display, self.visuals = name, display, []
-
-    def add(self, vid, x, y, w, h, visual):
-        self.visuals.append({
-            "$schema": S_VISUAL, "name": vid,
-            "position": {"x": x, "y": y, "z": len(self.visuals) * 1000, "height": h, "width": w,
-                         "tabOrder": len(self.visuals) * 1000},
-            "visual": visual,
-        })
+LABELS_ON = {"labels": [{"properties": {"show": lit("true"), "color": solid(INK), "fontSize": lit("11D"),
+                                        "bold": lit("true")}}]}
+NO_VALUE_AXIS = {"valueAxis": [{"properties": {"show": lit("false"), "gridlineShow": lit("false")}}]}
+QUARTER = C("DimDate", "Quarter Label")
 
 
-AXIS_TITLES_OFF = {"categoryAxis": [{"properties": {"showAxisTitle": lit("false")}}],
-                   "valueAxis": [{"properties": {"showAxisTitle": lit("false")}}]}
+def by_value(entity, prop, value):
+    return {"data": [{"scopeId": {"Comparison": {"ComparisonKind": 0, "Left": field(entity, prop),
+                                                 "Right": {"Literal": {"Value": f"'{value}'"}}}}}]}
 
 
-def chart(vtype, roles, title, sort=None, objects=None):
-    if vtype in ("lineChart", "clusteredBarChart", "clusteredColumnChart"):
-        objects = {**AXIS_TITLES_OFF, **(objects or {})}
+def chart(vtype, roles, title, subtitle=None, sort=None, objects=None):
+    objects = dict(objects or {})
+    for axis in ("categoryAxis", "valueAxis"):
+        if vtype in ("lineChart", "areaChart", "clusteredBarChart", "clusteredColumnChart", "columnChart", "barChart"):
+            objects.setdefault(axis, [{"properties": {}}])
+            objects[axis][0]["properties"].setdefault("showAxisTitle", lit("false"))
+            objects[axis][0]["properties"].setdefault("fontSize", lit("11D"))
+            objects[axis][0]["properties"].setdefault("labelColor", solid(INK_2))
+    if "legend" in objects:
+        objects["legend"][0]["properties"].setdefault("fontSize", lit("11D"))
     v = {"visualType": vtype,
          "query": {"queryState": {role: projections(f) for role, f in roles.items()}},
-         "visualContainerObjects": container_title(title),
+         "visualContainerObjects": tile(title, subtitle),
          "drillFilterOtherVisuals": True}
     if sort:
-        (e, p, m), direction = sort
+        (e, p, m, *_), direction = sort
         v["query"]["sortDefinition"] = {"sort": [{"field": field(e, p, m), "direction": direction}],
                                         "isDefaultSort": False}
     if objects:
@@ -342,113 +423,247 @@ def chart(vtype, roles, title, sort=None, objects=None):
     return v
 
 
-def textbox(text, size, bold=False, colour_hex="#0B0B0B"):
-    style = {"fontSize": f"{size}pt", "color": colour_hex}
-    if bold:
-        style["fontWeight"] = "bold"
-    return {"visualType": "textbox",
-            "objects": {"general": [{"properties": {"paragraphs": [
-                {"textRuns": [{"value": text, "textStyle": style}]}]}}]},
-            "drillFilterOtherVisuals": True}
+def textbox(paragraphs, background=None, pad=(8, 6, 12, 12), border=False, radius=8, align=None):
+    def run(t, size, bold, col):
+        return {"value": t, "textStyle": {"fontSize": f"{size}pt", "color": col,
+                                          **({"fontWeight": "bold"} if bold else {})}}
+    paras = [{"textRuns": [run(*r) for r in (p if isinstance(p, list) else [p])],
+              **({"horizontalTextAlignment": align} if align else {})} for p in paragraphs if p]
+    v = {"visualType": "textbox", "drillFilterOtherVisuals": True,
+         "objects": {"general": [{"properties": {"paragraphs": paras}}]}}
+    v["visualContainerObjects"] = tile(background=background, border=border, pad=pad, radius=radius) if background \
+        else {"background": [{"properties": {"show": lit("false")}}]}
+    return v
 
 
-def card(measure, label):
-    return {"visualType": "card",
-            "query": {"queryState": {"Values": projections([M(measure)])}},
-            "objects": {"categoryLabels": [{"properties": {"show": lit("true")}}]},
-            "visualContainerObjects": container_title(label, show=False),
-            "drillFilterOtherVisuals": True}
+def card(measure, label, value_colour=INK, size=28, show_label=True, pad=(4, 2, 12, 12)):
+    v = {"visualType": "card", "query": {"queryState": {"Values": projections([M(measure)])}},
+         "objects": {"labels": [{"properties": {"color": solid(value_colour), "fontSize": lit(f"{size}D"),
+                                                "fontFamily": s("Segoe UI Semibold")}}],
+                     "categoryLabels": [{"properties": {"show": lit("true" if show_label else "false"),
+                                                        "color": solid(INK_2), "fontSize": lit("12D")}}]},
+         "visualContainerObjects": tile(border=False, pad=pad),
+         "drillFilterOtherVisuals": True}
+    v["query"]["queryState"]["Values"]["projections"][0]["displayName"] = label
+    return v
 
 
 def slicer(entity, prop, title):
-    return {"visualType": "slicer",
-            "query": {"queryState": {"Values": projections([C(entity, prop)])}},
+    return {"visualType": "slicer", "query": {"queryState": {"Values": projections([C(entity, prop)])}},
             "objects": {"data": [{"properties": {"mode": s("Dropdown")}}],
-                        "header": [{"properties": {"text": s(title)}}]},
-            "visualContainerObjects": container_title(title, show=False),
-            "drillFilterOtherVisuals": True}
+                        "header": [{"properties": {"text": s(title), "fontColor": solid(INK), "bold": lit("true"),
+                                                   "fontSize": lit("10D")}}],
+                        "items": [{"properties": {"fontSize": lit("11D")}}]},
+            "visualContainerObjects": tile(pad=(4, 4, 10, 10)), "drillFilterOtherVisuals": True}
 
 
-LABELS_ON = {"labels": [{"properties": {"show": lit("true")}}]}
-MONTH = C("DimDate", "Month")
+def navigator():
+    state = lambda sid, props: {"properties": props, "selector": {"id": sid}}
+    return {"visualType": "pageNavigator", "drillFilterOtherVisuals": True,
+            "objects": {
+                "layout": [{"properties": {"orientation": lit("0D"), "cellPadding": lit("8L")}}],
+                "pages": [{"properties": {"showHiddenPages": lit("false"), "showTooltipPages": lit("false")}}],
+                "shape": [{"properties": {"tileShape": s("rectangleRounded"), "rectangleRoundedCurve": lit("16L")}}],
+                "fill": [state("default", {"show": lit("true"), "fillColor": solid(NAVY_2), "transparency": lit("0D")}),
+                         state("hover", {"fillColor": solid("#2E5378")}),
+                         state("selected", {"fillColor": solid(SKY)})],
+                "text": [state("default", {"fontColor": solid("#D5E0EE"), "fontSize": lit("11D")}),
+                         state("selected", {"fontColor": solid("#FFFFFF"), "bold": lit("true")})],
+                "outline": [state("default", {"show": lit("false")})],
+            },
+            "visualContainerObjects": {"background": [{"properties": {"show": lit("false")}}]}}
 
 
-def header(page, title, subtitle):
-    page.add("title", 24, 4, 1000, 56, textbox(title, 20, bold=True))
-    page.add("subtitle", 24, 50, 1200, 34, textbox(subtitle, 11, colour_hex="#52514E"))
+class Page:
+    def __init__(self, name, display):
+        self.name, self.display, self.visuals, self.no_filter = name, display, [], []
+
+    def add(self, vid, x, y, w, h, visual):
+        n = len(self.visuals)
+        self.visuals.append({"$schema": S_VISUAL, "name": vid, "visual": visual,
+                             "position": {"x": x, "y": y, "z": n * 1000, "height": h, "width": w,
+                                          "tabOrder": n * 1000}})
+
+    def json(self):
+        page = {"$schema": S_PAGE, "name": self.name, "displayName": self.display, "displayOption": "FitToPage",
+                "height": 720, "width": 1280,
+                "objects": {"background": [{"properties": {
+                    "color": solid(PAGE_BG), "transparency": lit("0D"),
+                    "image": {"image": {"name": s("page_background.png"),
+                                        "url": {"expr": {"ResourcePackageItem": {
+                                            "PackageName": "RegisteredResources", "PackageType": 1,
+                                            "ItemName": "page_background.png"}}},
+                                        "scaling": s("Fit")}}}}],
+                            "outspace": [{"properties": {"color": solid(PAGE_BG)}}]}}
+        if self.no_filter:
+            page["visualInteractions"] = [{"source": a, "target": b, "type": "NoFilter"} for a, b in self.no_filter]
+        return page
 
 
-def slicer_row(page, y=84):
-    page.add("slicerYear", 24, y, 200, 64, slicer("DimDate", "Year", "Year"))
-    page.add("slicerPlan", 236, y, 200, 64, slicer("patients_clean", "plan_type", "Plan type"))
-    page.add("slicerNetwork", 448, y, 200, 64, slicer("providers_clean", "network_status", "Network"))
-    page.add("slicerClaimType", 660, y, 200, 64, slicer(FACT, "claim_type", "Claim type"))
+def frame(page, section, headline, filters=True):
+    """Navy top bar with navigation, then the section label and headline, filters on the right."""
+    page.add("topBar", 0, 0, 1280, 64, textbox(
+        [("Healthcare Claims Analytics", 18, True, "#FFFFFF"),
+         ("Where is claim revenue being lost?   ·   50,000 synthetic claims, 2024-2025   ·   Built by Isaac Agyapong",
+          9, False, "#AFC3DA")], background=NAVY, radius=0, pad=(8, 0, 24, 12)))
+    page.add("navigator", 700, 12, 556, 40, navigator())
+    page.add("topAccent", 0, 64, 1280, 4, textbox([None], background=SKY, radius=0, pad=(0, 0, 0, 0)))
+    page.add("headline", 24, 76, 860 if filters else 1232, 56, textbox(
+        [(section.upper(), 10, True, "#2F6DB5"), (headline, 16, True, INK)], pad=(4, 0, 4, 4)))
+    if filters:
+        page.add("slicerYear", 896, 78, 176, 52, slicer("DimDate", "Year", "Year"))
+        page.add("slicerPlan", 1084, 78, 172, 52, slicer("patients_clean", "plan_type", "Plan type"))
+
+
+def kpi(page, i, x, y, w, measure, label, context, colour, h=120, size=28):
+    page.add(f"kpiTile{i}", x, y, w, h, textbox([None], background="#FFFFFF", border=True))
+    page.add(f"kpiAccent{i}", x + 1, y + 14, 5, h - 28, textbox([None], background=colour, radius=0, pad=(0, 0, 0, 0)))
+    page.add(f"kpi{i}", x + 8, y + 6, w - 12, h - 38, card(measure, label, value_colour=colour, size=size))
+    page.add(f"kpiContext{i}", x + 8, y + h - 34, w - 12, 28,
+             card(context, "", value_colour=INK_2, size=11, show_label=False, pad=(0, 0, 12, 12)))
+
+
+def data_bar(measure, colour):
+    return {"properties": {"dataBars": {"positiveColor": solid(colour), "negativeColor": solid(colour),
+                                        "axisColor": solid("#FFFFFF"), "reverseDirection": lit("false"),
+                                        "hideText": lit("false")}},
+            "selector": {"metadata": f"{FACT}.{measure}"}}
+
+
+TABLE_TEXT = {"values": [{"properties": {"fontSize": lit("11D")}}],
+              "columnHeaders": [{"properties": {"fontSize": lit("11D"), "bold": lit("true")}}],
+              "total": [{"properties": {"totals": lit("false")}}]}
 
 
 def build_pages():
-    # ---- Page 1: Executive overview
-    p1 = Page("executiveOverview", "Executive Overview")
-    header(p1, "Healthcare Claims: Executive Overview",
-           "Where is claim revenue being lost? 50,000 claims, 2024-2025 (synthetic data)")
-    slicer_row(p1)
-    kpis = [("Total Claims", "Total claims"), ("Total Paid", "Total paid"), ("Denial Rate", "Denial rate"),
-            ("Denied Billed $", "Denied billed $"), ("Avg Days to Process", "Avg days to process")]
-    for i, (m, label) in enumerate(kpis):
-        p1.add(f"kpi{i + 1}", 24 + i * 248, 150, 236, 108, card(m, label))
-    p1.add("volumeTrend", 24, 266, 612, 194, chart(
-        "lineChart", {"Category": [MONTH], "Y": [M("Total Claims")]}, "Monthly claim volume",
-        sort=(MONTH, "Ascending"),
-        objects={"valueAxis": [{"properties": {"start": lit("0D"), "showAxisTitle": lit("false")}}]}))
-    p1.add("denialTrend", 648, 266, 608, 194, chart(
-        "lineChart", {"Category": [MONTH], "Y": [M("Denial Rate (trend)")], "Series": [C(FACT, "claim_type")]},
-        "Denial rate by claim type (Dec 2025 excluded: mostly pending)", sort=(MONTH, "Ascending")))
-    p1.add("denialReasons", 24, 468, 1232, 244, chart(
-        "clusteredBarChart", {"Category": [C(FACT, "denial_reason")], "Y": [M("Denied Billed $")]},
-        "Denied billed $ by reason", sort=(M("Denied Billed $"), "Descending"),
-        objects={**LABELS_ON, "dataPoint": [{"properties": {"fill": colour(BLUE)}}]}))
+    # ---------------------------------------------------------------- 1. Overview
+    p1 = Page("overview", "Overview")
+    frame(p1, "Executive summary", "1 in 8 decided claims is denied, putting $19M of billed charges at risk")
+    kpis = [("Total Claims", "Claims", "KPI Claims Context", BLUE),
+            ("Total Paid", "Paid", "KPI Paid Context", BLUE),
+            ("Denial Rate", "Denial rate", "KPI Denial Context", CRIMSON),
+            ("Denied Billed $", "Billed charges denied", "KPI Denied Context", CRIMSON),
+            ("Avg Days to Process", "Avg days to decision", "KPI Days Context", SLATE)]
+    for i, (m, label, ctx, colour) in enumerate(kpis):
+        kpi(p1, i + 1, 24 + i * 249, TOP, 237, m, label, ctx, colour)
+    p1.add("denialTrend", 24, 268, 440, 440, chart(
+        "areaChart", {"Category": [QUARTER], "Y": [MN("Denial Rate (complete)", "Denial rate")]},
+        "The denial rate climbed through 2025",
+        "Denied as a share of decided claims, by quarter (Q4 2025 = Oct-Nov; December mostly pending)",
+        sort=(QUARTER, "Ascending"),
+        objects={**LABELS_ON,
+                 # axis hidden but fixed, so the top label is never clipped
+                 "valueAxis": [{"properties": {"show": lit("false"), "gridlineShow": lit("false"),
+                                               "start": lit("0.09D"), "end": lit("0.15D")}}],
+                 "lineStyles": [{"properties": {"showMarker": lit("true"), "markerSize": lit("7D")}}],
+                 "dataPoint": [{"properties": {"fill": solid(CRIMSON)},
+                                "selector": {"metadata": f"{FACT}.Denial Rate (complete)"}}]}))
+    p1.add("reasonBars", 476, 268, 492, 440, chart(
+        "clusteredBarChart", {"Category": [C(FACT, "denial_reason")], "Y": [MN("Denied Billed $", "Denied billed $")]},
+        "Missing prior authorization is the #1 cost",
+        "Billed charges denied, by denial reason", sort=(M("Denied Billed $"), "Descending"),
+        objects={**LABELS_ON, **NO_VALUE_AXIS,
+                 "labels": [{"properties": {"show": lit("true"), "color": solid(INK), "fontSize": lit("11D"),
+                                            "bold": lit("true"), "labelDisplayUnits": lit("1000000D"),
+                                            "labelPrecision": lit("1L")}}],
+                 "categoryAxis": [{"properties": {"maxMarginFactor": lit("50L"), "fontSize": lit("11D"),
+                                                  "labelColor": solid(INK)}}],
+                 "dataPoint": [{"properties": {"fill": {"solid": {"color": {"expr": field(FACT, "Reason Colour", True)}}}},
+                                "selector": {"data": [{"dataViewWildcard": {"matchingOption": 1}}]}}]}))
+    status_colours = {"Paid": BLUE, "Denied": CRIMSON, "Pending": "#B8C2CE"}
+    p1.add("statusDonut", 980, 268, 276, 440, chart(
+        "donutChart", {"Category": [C(FACT, "claim_status")], "Y": [MN("Total Claims", "Claims")]},
+        "Where every claim ended up", "All 50,000 claims by status",
+        objects={"labels": [{"properties": {"show": lit("true"), "labelStyle": s("Category, percent of total"),
+                                            "percentageLabelPrecision": lit("0L"), "fontSize": lit("11D"),
+                                            "color": solid(INK)}}],
+                 "legend": [{"properties": {"show": lit("false")}}],
+                 "dataPoint": [{"properties": {"fill": solid(c)}, "selector": by_value(FACT, "claim_status", k)}
+                               for k, c in status_colours.items()]}))
 
-    # ---- Page 2: Denial deep dive
-    p2 = Page("denialDeepDive", "Denial Deep Dive")
-    header(p2, "Denial Deep Dive",
-           "Missing prior authorization is the largest and fastest-growing reason; out-of-network claims are denied about 2x as often")
-    slicer_row(p2)
-    for i, (m, label) in enumerate([("Prior Auth Denials 2024", "Prior-auth denials 2024"),
-                                    ("Prior Auth Denials 2025", "Prior-auth denials 2025"),
-                                    ("Prior Auth YoY %", "Prior-auth change YoY"),
-                                    ("Denied Claims", "All denied claims")]):
-        p2.add(f"paCard{i + 1}", 24 + i * 308, 160, 296, 104, card(m, label))
-    p2.add("reasonMatrix", 24, 280, 612, 208, chart(
-        "pivotTable", {"Rows": [C(FACT, "denial_reason")], "Columns": [C("DimDate", "Year")],
-                       "Values": [M("Denied Claims")]}, "Denied claims by reason and year"))
-    p2.add("planNetwork", 648, 280, 608, 208, chart(
-        "clusteredColumnChart", {"Category": [C("patients_clean", "plan_type")], "Y": [M("Denial Rate")],
-                                 "Series": [C("providers_clean", "network_status")]},
-        "Denial rate by plan type and network status", objects=LABELS_ON))
-    p2.add("priorAuthTrend", 24, 496, 1232, 208, chart(
-        "lineChart", {"Category": [MONTH], "Y": [M("Prior Auth Denials"), M("Other Denials")]},
-        "Monthly denials: missing prior authorization vs all other reasons (Nov-Dec 2025 partly pending)", sort=(MONTH, "Ascending")))
+    # ---------------------------------------------------------------- 2. Denial drivers
+    p2 = Page("denials", "Denial Drivers")
+    frame(p2, "Denial drivers", "Prior-auth denials doubled; out-of-network claims are denied 2x as often")
+    kpis = [("Prior Auth Denials 2025", "Prior-auth denials, 2025", "KPI Prior Auth Context", CRIMSON),
+            ("Prior Auth YoY %", "Change from 2024", "KPI YoY Context", CRIMSON),
+            ("Out-of-Network Denial Rate", "Out-of-network denial rate", "KPI Network Context", CRIMSON),
+            ("Denied Billed $", "Billed charges denied", "KPI Denied Context", CRIMSON)]
+    for i, (m, label, ctx, colour) in enumerate(kpis):
+        kpi(p2, i + 1, 24 + i * 311, TOP, 299, m, label, ctx, colour)
+    p2.add("priorAuthQuarters", 24, 268, 600, 440, chart(
+        "clusteredColumnChart", {"Category": [QUARTER], "Y": [MN("Prior Auth Denials", "Prior-auth denials")]},
+        "Missing prior-authorization denials doubled in 2025",
+        "Denied claims with reason 'missing prior authorization', by quarter", sort=(QUARTER, "Ascending"),
+        objects={**LABELS_ON, **NO_VALUE_AXIS, "dataPoint": [{"properties": {"fill": solid(CRIMSON)}}]}))
+    network_colours = {"In-Network": BLUE, "Out-of-Network": CRIMSON}
+    p2.add("planNetwork", 636, 268, 620, 216, chart(
+        "clusteredBarChart", {"Category": [C("patients_clean", "plan_type")],
+                              "Series": [C("providers_clean", "network_status")], "Y": [MN("Denial Rate", "Denial rate")]},
+        "Out-of-network claims are denied about 2x as often", "Denial rate by plan type and provider network",
+        objects={**LABELS_ON, **NO_VALUE_AXIS,
+                 "legend": [{"properties": {"show": lit("true"), "position": s("TopRight"), "showTitle": lit("false")}}],
+                 "dataPoint": [{"properties": {"fill": solid(c)}, "selector": by_value("providers_clean", "network_status", k)}
+                               for k, c in network_colours.items()]}))
+    p2.add("reasonTable", 636, 496, 620, 212, chart(
+        "tableEx", {"Values": [C(FACT, "denial_reason"), MN("Denials 2024", "2024"), MN("Denials 2025", "2025"),
+                               MN("Denials YoY %", "Change"), MN("Denied Billed $", "Denied $")]},
+        "Denials by reason, 2024 vs. 2025", None, sort=(M("Denied Billed $"), "Descending"),
+        objects={**TABLE_TEXT, "columnFormatting": [data_bar("Denied Billed $", "#F0B5AE")]}))
 
-    # ---- Page 3: Provider scorecard
-    p3 = Page("providerScorecard", "Provider Scorecard")
-    header(p3, "Provider Scorecard",
-           "Each provider vs peers with the same claim type and network status. Orange = 10+ points above peers")
-    slicer_row(p3)
-    fill_by_measure = {"solid": {"color": {"expr": field(FACT, "Excess Colour", measure=True)}}}
-    p3.add("topProviders", 24, 160, 500, 544, chart(
-        "clusteredBarChart", {"Category": [C("providers_clean", "provider_name")], "Y": [M("Top 10 Excess (pts)")]},
-        "Top 10 providers: denial rate above peers (percentage points)",
+    # ---------------------------------------------------------------- 3. Providers
+    p3 = Page("providers", "Providers")
+    frame(p3, "Provider scorecard", "Three providers deny far above their peers, mostly from coding and duplicate errors")
+    kpis = [("Flagged Providers", "Providers flagged", "KPI Flagged Context", AMBER),
+            ("Flagged Denied $", "Billed charges denied at flagged providers", "KPI Flagged $ Context", AMBER),
+            ("Flagged Coding Share", "of their denials are coding or duplicate errors", "KPI Coding Context", AMBER)]
+    for i, (m, label, ctx, colour) in enumerate(kpis):
+        kpi(p3, i + 1, 24 + i * 415, TOP, 403, m, label, ctx, colour)
+    p3.add("topProviders", 24, 268, 560, 440, chart(
+        "clusteredBarChart", {"Category": [C("providers_clean", "provider_name")],
+
+                              "Y": [MN("Top 10 Excess (pts)", "Points above peers")]},
+        "Denial rate above peers: top 10 providers",
+        "Percentage points above providers with the same claim type and network (amber = 10+ points)",
         sort=(M("Top 10 Excess (pts)"), "Descending"),
-        objects={**LABELS_ON, "dataPoint": [{"properties": {"fill": fill_by_measure},
-                                             "selector": {"data": [{"dataViewWildcard": {"matchingOption": 1}}]}}]}))
-    p3.add("providerTable", 536, 160, 720, 344, chart(
+        objects={**LABELS_ON, **NO_VALUE_AXIS,
+                 "categoryAxis": [{"properties": {"maxMarginFactor": lit("45L"), "fontSize": lit("11D"),
+                                                  "labelColor": solid(INK)}}],
+                 "dataPoint": [{"properties": {"fill": {"solid": {"color": {"expr": field(FACT, "Excess Colour", True)}}}},
+                                "selector": {"data": [{"dataViewWildcard": {"matchingOption": 1}}]}}]}))
+    p3.add("providerTable", 596, 268, 660, 440, chart(
         "tableEx", {"Values": [C("providers_clean", "provider_name"), C("providers_clean", "specialty"),
-                               C("providers_clean", "network_status"), M("Decided Claims"), M("Denial Rate"),
-                               M("Peer Denial Rate"), M("Excess Denial (pts)"), M("Denied Billed $")]},
-        "All providers", sort=(M("Excess Denial (pts)"), "Descending")))
-    p3.add("paidTreemap", 536, 512, 720, 192, chart(
-        "treemap", {"Group": [C("providers_clean", "specialty")], "Values": [M("Total Paid")]},
-        "Total paid by specialty"))
-    return [p1, p2, p3]
+                               MN("Denial Rate", "Denial rate"), MN("Peer Denial Rate", "Peer rate"),
+                               MN("Excess Denial (pts)", "Pts above peers")]},
+        "Every provider vs. its peers", None, sort=(M("Excess Denial (pts)"), "Descending"),
+        objects={**TABLE_TEXT, "columnFormatting": [data_bar("Excess Denial (pts)", "#F2D49B")]}))
+    p3.no_filter += [("topProviders", "providerTable")]
+
+    # ---------------------------------------------------------------- 4. Data notes
+    p4 = Page("dataNotes", "Data Notes")
+    frame(p4, "Data notes", "Sources, definitions and limitations", filters=False)
+    cols = [
+        ("Data", ["50,000 synthetic claims (2024-2025), 8,000 patients, 250 providers",
+                  "Generated in Python with real-world patterns: seasonality, network effects, a prior-auth policy "
+                  "change and three problem providers",
+                  "Raw export deliberately messy (duplicates, mixed date formats, missing values); cleaned in Python",
+                  "No real patient information is used"]),
+        ("Definitions", ["Denial rate = denied / decided (paid + denied) claims; pending excluded",
+                         "Denied billed $ = billed charges on denied claims (revenue at risk before appeals)",
+                         "Peer rate = denial rate of providers with the same claim type and network status",
+                         "Flagged provider = 10+ percentage points above its peer rate"]),
+        ("Limitations", ["Synthetic data: patterns are realistic but the numbers are not real",
+                         "December 2025 is mostly pending, so trend charts stop at November",
+                         "Denied charges are billed amounts, not the amount a payer would have paid",
+                         "A flag is a reason to review billing, not proof of wrongdoing"]),
+    ]
+    for i, (heading, lines) in enumerate(cols):
+        x = 24 + i * 415
+        p4.add(f"notes{i + 1}", x, TOP, 403, 572, textbox(
+            [(heading, 18, True, INK)] + [("•  " + t, 13, False, INK) for t in lines],
+            background="#FFFFFF", border=True, pad=(18, 12, 20, 20)))
+        p4.add(f"notesAccent{i + 1}", x + 1, TOP + 18, 5, 40, textbox([None], background=SKY, radius=0,
+                                                                     pad=(0, 0, 0, 0)))
+    return [p1, p2, p3, p4]
 
 
 def build_report():
@@ -468,7 +683,8 @@ def build_report():
             {"name": "SharedResources", "type": "SharedResources",
              "items": [{"name": BASE_THEME, "path": f"BaseThemes/{BASE_THEME}.json", "type": "BaseTheme"}]},
             {"name": "RegisteredResources", "type": "RegisteredResources",
-             "items": [{"name": CUSTOM_THEME, "path": CUSTOM_THEME, "type": "CustomTheme"}]},
+             "items": [{"name": CUSTOM_THEME, "path": CUSTOM_THEME, "type": "CustomTheme"},
+                       {"name": "page_background.png", "path": "page_background.png", "type": "Image"}]},
         ],
     })
     static = RPT / "StaticResources"
@@ -476,17 +692,18 @@ def build_report():
     shutil.copy(BASE_THEME_SRC, static / "SharedResources" / "BaseThemes" / f"{BASE_THEME}.json")
     write_json(static / "RegisteredResources" / CUSTOM_THEME, {
         "name": "Claims Portfolio",
-        "dataColors": [BLUE, ORANGE, AQUA, "#EDA100", "#E87BA4", "#008300", "#4A3AA7", "#E34948"],
+        "dataColors": [BLUE, CRIMSON, AMBER, SLATE, "#7FA7D9", "#E6A59E", "#8A9BB0", "#3E5C7E"],
         "foreground": "#0B0B0B", "foregroundNeutralSecondary": "#52514E", "background": "#FFFFFF",
         "tableAccent": BLUE, "good": "#0CA30C", "neutral": "#FAB219", "bad": "#D03B3B",
     })
+    # page background image (generated by Python/make_background.py)
+    subprocess.run([sys.executable, str(ROOT / "Python" / "make_background.py")], check=True)
+    shutil.copy(DASH / "assets" / "page_background.png", static / "RegisteredResources" / "page_background.png")
     pages = build_pages()
     write_json(d / "pages" / "pages.json", {"$schema": S_PAGES, "pageOrder": [p.name for p in pages],
                                             "activePageName": pages[0].name})
     for p in pages:
-        write_json(d / "pages" / p.name / "page.json", {
-            "$schema": S_PAGE, "name": p.name, "displayName": p.display,
-            "displayOption": "FitToPage", "height": 720, "width": 1280})
+        write_json(d / "pages" / p.name / "page.json", p.json())
         for v in p.visuals:
             write_json(d / "pages" / p.name / "visuals" / v["name"] / "visual.json", v)
 

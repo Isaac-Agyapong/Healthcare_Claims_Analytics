@@ -52,4 +52,3 @@ table providers_clean
 				    Typed
 
 	annotation PBI_ResultType = Table
-

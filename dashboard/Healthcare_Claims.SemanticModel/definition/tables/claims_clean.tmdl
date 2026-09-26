@@ -94,7 +94,7 @@ table claims_clean
 		displayFolder: Providers
 		lineageTag: f1782f93-e602-5a0a-b763-84ac1c5ab14f
 
-	measure 'Excess Colour' = IF ( [Excess Denial (pts)] >= 10, "#EB6834", "#C3C2B7" )
+	measure 'Excess Colour' = IF ( [Excess Denial (pts)] >= 10, "#C98A12", "#C9D1DB" )
 		displayFolder: Providers
 		lineageTag: 65e9513f-cee1-5f63-948d-4e911f991909
 
@@ -127,6 +127,112 @@ table claims_clean
 		formatString: 0.0%;-0.0%;0.0%
 		displayFolder: Denials
 		lineageTag: d225e6fc-13ae-5b5c-8d57-2d082d70a485
+
+	measure 'Denial Rate (complete)' =
+			// December 2025 is left out: most of its claims are still pending
+			CALCULATE ( [Denial Rate], KEEPFILTERS ( DimDate[Date] < DATE ( 2025, 12, 1 ) ) )
+		formatString: 0.0%;-0.0%;0.0%
+		displayFolder: Rates
+		lineageTag: bee3667b-3aa9-50b0-8545-ec529f613f8a
+
+	measure 'Denied Share of Billed' = DIVIDE ( [Denied Billed $], [Total Billed] )
+		formatString: 0.0%;-0.0%;0.0%
+		displayFolder: Money
+		lineageTag: a537c57e-ddfd-51ef-93f6-518345e25bc5
+
+	measure 'Reason Colour' = IF ( SELECTEDVALUE ( claims_clean[denial_reason] ) = "Missing prior authorization", "#C0392B", "#E6A59E" )
+		displayFolder: Denials
+		lineageTag: 90256c34-9632-505b-a20d-85779d68050c
+
+	measure 'In-Network Denial Rate' = CALCULATE ( [Denial Rate], providers_clean[network_status] = "In-Network" )
+		formatString: 0.0%;-0.0%;0.0%
+		displayFolder: Rates
+		lineageTag: c668b557-0000-5a01-a1f6-2680fb807b45
+
+	measure 'Out-of-Network Denial Rate' = CALCULATE ( [Denial Rate], providers_clean[network_status] = "Out-of-Network" )
+		formatString: 0.0%;-0.0%;0.0%
+		displayFolder: Rates
+		lineageTag: 491912c5-b9f5-57ab-ab3b-7cf94a7f3490
+
+	measure 'Denials 2024' = CALCULATE ( [Denied Claims], DimDate[Year] = 2024 )
+		formatString: #,0
+		displayFolder: Denials
+		lineageTag: 926583fc-ce9e-508a-8e4f-251bbdbb5b2a
+
+	measure 'Denials 2025' = CALCULATE ( [Denied Claims], DimDate[Year] = 2025 )
+		formatString: #,0
+		displayFolder: Denials
+		lineageTag: 5813d9ba-9b0a-50d3-83d8-7ae978bb0de3
+
+	measure 'Denials YoY %' = DIVIDE ( [Denials 2025] - [Denials 2024], [Denials 2024] )
+		formatString: +0%;-0%;0%
+		displayFolder: Denials
+		lineageTag: 439f7308-8ccf-5753-b9de-2b2187f8f05c
+
+	measure 'Flagged Providers' = COUNTROWS ( FILTER ( VALUES ( providers_clean[provider_name] ), [Excess Denial (pts)] >= 10 ) )
+		formatString: #,0
+		displayFolder: Providers
+		lineageTag: 872e5245-0e9b-5309-b0ae-c06ed361c851
+
+	measure 'Flagged Denied $' = SUMX ( FILTER ( VALUES ( providers_clean[provider_name] ), [Excess Denial (pts)] >= 10 ), [Denied Billed $] )
+		formatString: \$#,0;(\$#,0);\$#,0
+		displayFolder: Providers
+		lineageTag: da466b41-2065-5b90-850e-3ed6fec94dd2
+
+	measure 'Flagged Coding Share' =
+			VAR _flagged = FILTER ( VALUES ( providers_clean[provider_name] ), [Excess Denial (pts)] >= 10 )
+			RETURN DIVIDE (
+			    CALCULATE ( [Denied Claims], _flagged, claims_clean[denial_reason] IN { "Coding error", "Duplicate claim" } ),
+			    CALCULATE ( [Denied Claims], _flagged ) )
+		formatString: 0%
+		displayFolder: Providers
+		lineageTag: d92bfebb-2a55-52d3-9fa0-5d1b34f8ab6a
+
+	measure 'KPI Claims Context' = FORMAT ( [Unique Patients], "#,0" ) & " patients"
+		displayFolder: Context
+		lineageTag: 1fe7da8e-df94-5597-acdd-52baf4bbadf0
+
+	measure 'KPI Paid Context' = FORMAT ( [Paid to Billed %], "0%" ) & " of billed charges"
+		displayFolder: Context
+		lineageTag: 3f08331f-1f9f-5eb4-b347-24ceee781f85
+
+	measure 'KPI Denial Context' = FORMAT ( [Denied Claims], "#,0" ) & " of " & FORMAT ( [Decided Claims], "#,0" ) & " decided"
+		displayFolder: Context
+		lineageTag: 3eb99372-030f-5b55-9b36-83bf7b3a4eed
+
+	measure 'KPI Denied Context' = FORMAT ( [Denied Share of Billed], "0.0%" ) & " of all billed charges"
+		displayFolder: Context
+		lineageTag: df45f691-d45a-5c6f-831c-d8ffe6b15141
+
+	measure 'KPI Days Context' =
+			"denied: " & FORMAT ( CALCULATE ( [Avg Days to Process], claims_clean[claim_status] = "Denied" ), "0" )
+			    & " days  ·  paid: " & FORMAT ( CALCULATE ( [Avg Days to Process], claims_clean[claim_status] = "Paid" ), "0" )
+		displayFolder: Context
+		lineageTag: 7caf8722-5744-549c-bb46-decb433f195d
+
+	measure 'KPI Prior Auth Context' = "vs " & FORMAT ( [Prior Auth Denials 2024], "#,0" ) & " in 2024"
+		displayFolder: Context
+		lineageTag: ff29a038-ad0d-5990-9810-cac99861773d
+
+	measure 'KPI YoY Context' = "the fastest-growing denial reason"
+		displayFolder: Context
+		lineageTag: 09539756-c485-55ec-bd11-bf06c0b8eab7
+
+	measure 'KPI Network Context' = "vs " & FORMAT ( [In-Network Denial Rate], "0.0%" ) & " in-network"
+		displayFolder: Context
+		lineageTag: d06f6c7f-bb48-5812-a0da-a30d409925ff
+
+	measure 'KPI Flagged Context' = "10+ points above their peers"
+		displayFolder: Context
+		lineageTag: a8fb219a-7371-5128-b347-ccbcedd8870a
+
+	measure 'KPI Flagged $ Context' = FORMAT ( DIVIDE ( [Flagged Denied $], [Denied Billed $] ), "0.0%" ) & " of all denied charges"
+		displayFolder: Context
+		lineageTag: 435c01f3-10a3-5239-b567-ee68d3cf9324
+
+	measure 'KPI Coding Context' = "fixable with a claim scrubber and billing training"
+		displayFolder: Context
+		lineageTag: 96c94e98-48d2-5c88-a069-324b63dce7ec
 
 	column claim_id
 		dataType: string
@@ -325,4 +431,3 @@ table claims_clean
 				    Typed
 
 	annotation PBI_ResultType = Table
-
