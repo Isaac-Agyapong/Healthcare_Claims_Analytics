@@ -15,7 +15,7 @@
                     "value": "Definitions",
                     "textStyle": {
                       "fontSize": "18pt",
-                      "color": "#111C2B",
+                      "color": "#EAF1FB",
                       "fontWeight": "bold"
                     }
                   }
@@ -27,7 +27,7 @@
                     "value": "\u2022  Denial rate = denied / decided (paid + denied) claims; pending excluded",
                     "textStyle": {
                       "fontSize": "13pt",
-                      "color": "#111C2B"
+                      "color": "#EAF1FB"
                     }
                   }
                 ]
@@ -38,7 +38,7 @@
                     "value": "\u2022  Denied billed $ = billed charges on denied claims (revenue at risk before appeals)",
                     "textStyle": {
                       "fontSize": "13pt",
-                      "color": "#111C2B"
+                      "color": "#EAF1FB"
                     }
                   }
                 ]
@@ -49,7 +49,7 @@
                     "value": "\u2022  Peer rate = denial rate of providers with the same claim type and network status",
                     "textStyle": {
                       "fontSize": "13pt",
-                      "color": "#111C2B"
+                      "color": "#EAF1FB"
                     }
                   }
                 ]
@@ -60,7 +60,7 @@
                     "value": "\u2022  Flagged provider = 10+ percentage points above its peer rate",
                     "textStyle": {
                       "fontSize": "13pt",
-                      "color": "#111C2B"
+                      "color": "#EAF1FB"
                     }
                   }
                 ]
@@ -86,7 +86,7 @@
                 "color": {
                   "expr": {
                     "Literal": {
-                      "Value": "'#FFFFFF'"
+                      "Value": "'#12203A'"
                     }
                   }
                 }
@@ -95,7 +95,7 @@
             "transparency": {
               "expr": {
                 "Literal": {
-                  "Value": "0D"
+                  "Value": "8D"
                 }
               }
             }
@@ -117,7 +117,7 @@
                 "color": {
                   "expr": {
                     "Literal": {
-                      "Value": "'#D9E0E8'"
+                      "Value": "'#263A5F'"
                     }
                   }
                 }
@@ -126,7 +126,7 @@
             "radius": {
               "expr": {
                 "Literal": {
-                  "Value": "8D"
+                  "Value": "14D"
                 }
               }
             }
@@ -192,15 +192,54 @@
             }
           }
         }
+      ],
+      "visualHeader": [
+        {
+          "properties": {
+            "background": {
+              "solid": {
+                "color": {
+                  "expr": {
+                    "Literal": {
+                      "Value": "'#12203A'"
+                    }
+                  }
+                }
+              }
+            },
+            "border": {
+              "solid": {
+                "color": {
+                  "expr": {
+                    "Literal": {
+                      "Value": "'#12203A'"
+                    }
+                  }
+                }
+              }
+            },
+            "foreground": {
+              "solid": {
+                "color": {
+                  "expr": {
+                    "Literal": {
+                      "Value": "'#9DB0CE'"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
       ]
     }
   },
   "position": {
     "x": 439,
     "y": 136,
-    "z": 6000,
+    "z": 7000,
     "height": 572,
     "width": 403,
-    "tabOrder": 6000
+    "tabOrder": 7000
   }
 }

@@ -1,6 +1,6 @@
 {
   "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/1.4.0/schema.json",
-  "name": "topBar",
+  "name": "titleAccentA",
   "visual": {
     "visualType": "textbox",
     "drillFilterOtherVisuals": true,
@@ -8,31 +8,7 @@
       "general": [
         {
           "properties": {
-            "paragraphs": [
-              {
-                "textRuns": [
-                  {
-                    "value": "Healthcare Claims Analytics",
-                    "textStyle": {
-                      "fontSize": "18pt",
-                      "color": "#FFFFFF",
-                      "fontWeight": "bold"
-                    }
-                  }
-                ]
-              },
-              {
-                "textRuns": [
-                  {
-                    "value": "Where is claim revenue being lost?   \u00b7   50,000 synthetic claims, 2024-2025   \u00b7   Built by Isaac Agyapong",
-                    "textStyle": {
-                      "fontSize": "9pt",
-                      "color": "#AFC3DA"
-                    }
-                  }
-                ]
-              }
-            ]
+            "paragraphs": []
           }
         }
       ]
@@ -53,7 +29,7 @@
                 "color": {
                   "expr": {
                     "Literal": {
-                      "Value": "'#14263F'"
+                      "Value": "'#38BDF8'"
                     }
                   }
                 }
@@ -62,7 +38,7 @@
             "transparency": {
               "expr": {
                 "Literal": {
-                  "Value": "0D"
+                  "Value": "8D"
                 }
               }
             }
@@ -84,7 +60,7 @@
                 "color": {
                   "expr": {
                     "Literal": {
-                      "Value": "'#D9E0E8'"
+                      "Value": "'#263A5F'"
                     }
                   }
                 }
@@ -119,7 +95,7 @@
             "top": {
               "expr": {
                 "Literal": {
-                  "Value": "8D"
+                  "Value": "0D"
                 }
               }
             },
@@ -133,14 +109,14 @@
             "left": {
               "expr": {
                 "Literal": {
-                  "Value": "24D"
+                  "Value": "0D"
                 }
               }
             },
             "right": {
               "expr": {
                 "Literal": {
-                  "Value": "12D"
+                  "Value": "0D"
                 }
               }
             }
@@ -159,15 +135,54 @@
             }
           }
         }
+      ],
+      "visualHeader": [
+        {
+          "properties": {
+            "background": {
+              "solid": {
+                "color": {
+                  "expr": {
+                    "Literal": {
+                      "Value": "'#12203A'"
+                    }
+                  }
+                }
+              }
+            },
+            "border": {
+              "solid": {
+                "color": {
+                  "expr": {
+                    "Literal": {
+                      "Value": "'#12203A'"
+                    }
+                  }
+                }
+              }
+            },
+            "foreground": {
+              "solid": {
+                "color": {
+                  "expr": {
+                    "Literal": {
+                      "Value": "'#9DB0CE'"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
       ]
     }
   },
   "position": {
-    "x": 0,
-    "y": 0,
-    "z": 0,
-    "height": 64,
-    "width": 1280,
-    "tabOrder": 0
+    "x": 24,
+    "y": 70,
+    "z": 1000,
+    "height": 3,
+    "width": 64,
+    "tabOrder": 1000
   }
 }

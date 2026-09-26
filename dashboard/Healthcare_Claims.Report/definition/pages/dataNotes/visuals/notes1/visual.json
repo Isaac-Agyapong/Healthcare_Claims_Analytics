@@ -15,7 +15,7 @@
                     "value": "Data",
                     "textStyle": {
                       "fontSize": "18pt",
-                      "color": "#111C2B",
+                      "color": "#EAF1FB",
                       "fontWeight": "bold"
                     }
                   }
@@ -27,7 +27,7 @@
                     "value": "\u2022  50,000 synthetic claims (2024-2025), 8,000 patients, 250 providers",
                     "textStyle": {
                       "fontSize": "13pt",
-                      "color": "#111C2B"
+                      "color": "#EAF1FB"
                     }
                   }
                 ]
@@ -38,7 +38,7 @@
                     "value": "\u2022  Generated in Python with real-world patterns: seasonality, network effects, a prior-auth policy change and three problem providers",
                     "textStyle": {
                       "fontSize": "13pt",
-                      "color": "#111C2B"
+                      "color": "#EAF1FB"
                     }
                   }
                 ]
@@ -49,7 +49,7 @@
                     "value": "\u2022  Raw export deliberately messy (duplicates, mixed date formats, missing values); cleaned in Python",
                     "textStyle": {
                       "fontSize": "13pt",
-                      "color": "#111C2B"
+                      "color": "#EAF1FB"
                     }
                   }
                 ]
@@ -60,7 +60,7 @@
                     "value": "\u2022  No real patient information is used",
                     "textStyle": {
                       "fontSize": "13pt",
-                      "color": "#111C2B"
+                      "color": "#EAF1FB"
                     }
                   }
                 ]
@@ -86,7 +86,7 @@
                 "color": {
                   "expr": {
                     "Literal": {
-                      "Value": "'#FFFFFF'"
+                      "Value": "'#12203A'"
                     }
                   }
                 }
@@ -95,7 +95,7 @@
             "transparency": {
               "expr": {
                 "Literal": {
-                  "Value": "0D"
+                  "Value": "8D"
                 }
               }
             }
@@ -117,7 +117,7 @@
                 "color": {
                   "expr": {
                     "Literal": {
-                      "Value": "'#D9E0E8'"
+                      "Value": "'#263A5F'"
                     }
                   }
                 }
@@ -126,7 +126,7 @@
             "radius": {
               "expr": {
                 "Literal": {
-                  "Value": "8D"
+                  "Value": "14D"
                 }
               }
             }
@@ -192,15 +192,54 @@
             }
           }
         }
+      ],
+      "visualHeader": [
+        {
+          "properties": {
+            "background": {
+              "solid": {
+                "color": {
+                  "expr": {
+                    "Literal": {
+                      "Value": "'#12203A'"
+                    }
+                  }
+                }
+              }
+            },
+            "border": {
+              "solid": {
+                "color": {
+                  "expr": {
+                    "Literal": {
+                      "Value": "'#12203A'"
+                    }
+                  }
+                }
+              }
+            },
+            "foreground": {
+              "solid": {
+                "color": {
+                  "expr": {
+                    "Literal": {
+                      "Value": "'#9DB0CE'"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
       ]
     }
   },
   "position": {
     "x": 24,
     "y": 136,
-    "z": 4000,
+    "z": 5000,
     "height": 572,
     "width": 403,
-    "tabOrder": 4000
+    "tabOrder": 5000
   }
 }

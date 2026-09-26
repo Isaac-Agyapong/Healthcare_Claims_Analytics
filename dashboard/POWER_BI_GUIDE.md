@@ -46,7 +46,7 @@ Star schema: one fact table and three dimensions, all many-to-one with single-di
 |---|---|---|
 | **Overview** | 5 KPI cards with context lines, quarterly denial-rate area chart, denied $ by reason (top reason highlighted), claim-status donut | How big is the problem and is it growing? |
 | **Denial Drivers** | 4 KPI cards, prior-auth denials by quarter, plan x network denial rates, denials-by-reason table (2024 vs 2025, data bars) | Why are claims denied? |
-| **Providers** | 3 KPI cards, top 10 providers by points above peers (amber = 10+), every provider vs. peers with data bars | Who should we act on? |
+| **Providers** | 3 KPI cards, top 10 providers by points above peers (gold = 10+), every provider vs. peers with data bars | Who should we act on? |
 | **Data Notes** | Data, definitions and limitations | How should the numbers be read? |
 ## DAX highlights
 

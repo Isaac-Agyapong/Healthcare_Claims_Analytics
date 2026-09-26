@@ -55,7 +55,7 @@
                 "color": {
                   "expr": {
                     "Literal": {
-                      "Value": "'#111C2B'"
+                      "Value": "'#9DB0CE'"
                     }
                   }
                 }
@@ -87,6 +87,28 @@
                   "Value": "11D"
                 }
               }
+            },
+            "fontColor": {
+              "solid": {
+                "color": {
+                  "expr": {
+                    "Literal": {
+                      "Value": "'#EAF1FB'"
+                    }
+                  }
+                }
+              }
+            },
+            "background": {
+              "solid": {
+                "color": {
+                  "expr": {
+                    "Literal": {
+                      "Value": "'#18294A'"
+                    }
+                  }
+                }
+              }
             }
           }
         }
@@ -108,7 +130,7 @@
                 "color": {
                   "expr": {
                     "Literal": {
-                      "Value": "'#FFFFFF'"
+                      "Value": "'#12203A'"
                     }
                   }
                 }
@@ -117,7 +139,7 @@
             "transparency": {
               "expr": {
                 "Literal": {
-                  "Value": "0D"
+                  "Value": "8D"
                 }
               }
             }
@@ -139,7 +161,7 @@
                 "color": {
                   "expr": {
                     "Literal": {
-                      "Value": "'#D9E0E8'"
+                      "Value": "'#263A5F'"
                     }
                   }
                 }
@@ -148,7 +170,7 @@
             "radius": {
               "expr": {
                 "Literal": {
-                  "Value": "8D"
+                  "Value": "14D"
                 }
               }
             }
@@ -214,6 +236,45 @@
             }
           }
         }
+      ],
+      "visualHeader": [
+        {
+          "properties": {
+            "background": {
+              "solid": {
+                "color": {
+                  "expr": {
+                    "Literal": {
+                      "Value": "'#12203A'"
+                    }
+                  }
+                }
+              }
+            },
+            "border": {
+              "solid": {
+                "color": {
+                  "expr": {
+                    "Literal": {
+                      "Value": "'#12203A'"
+                    }
+                  }
+                }
+              }
+            },
+            "foreground": {
+              "solid": {
+                "color": {
+                  "expr": {
+                    "Literal": {
+                      "Value": "'#9DB0CE'"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
       ]
     },
     "drillFilterOtherVisuals": true
@@ -221,9 +282,9 @@
   "position": {
     "x": 1084,
     "y": 78,
-    "z": 5000,
+    "z": 6000,
     "height": 52,
     "width": 172,
-    "tabOrder": 5000
+    "tabOrder": 6000
   }
 }

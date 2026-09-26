@@ -15,7 +15,7 @@
                     "value": "Limitations",
                     "textStyle": {
                       "fontSize": "18pt",
-                      "color": "#111C2B",
+                      "color": "#EAF1FB",
                       "fontWeight": "bold"
                     }
                   }
@@ -27,7 +27,7 @@
                     "value": "\u2022  Synthetic data: patterns are realistic but the numbers are not real",
                     "textStyle": {
                       "fontSize": "13pt",
-                      "color": "#111C2B"
+                      "color": "#EAF1FB"
                     }
                   }
                 ]
@@ -38,7 +38,7 @@
                     "value": "\u2022  December 2025 is mostly pending, so trend charts stop at November",
                     "textStyle": {
                       "fontSize": "13pt",
-                      "color": "#111C2B"
+                      "color": "#EAF1FB"
                     }
                   }
                 ]
@@ -49,7 +49,7 @@
                     "value": "\u2022  Denied charges are billed amounts, not the amount a payer would have paid",
                     "textStyle": {
                       "fontSize": "13pt",
-                      "color": "#111C2B"
+                      "color": "#EAF1FB"
                     }
                   }
                 ]
@@ -60,7 +60,7 @@
                     "value": "\u2022  A flag is a reason to review billing, not proof of wrongdoing",
                     "textStyle": {
                       "fontSize": "13pt",
-                      "color": "#111C2B"
+                      "color": "#EAF1FB"
                     }
                   }
                 ]
@@ -86,7 +86,7 @@
                 "color": {
                   "expr": {
                     "Literal": {
-                      "Value": "'#FFFFFF'"
+                      "Value": "'#12203A'"
                     }
                   }
                 }
@@ -95,7 +95,7 @@
             "transparency": {
               "expr": {
                 "Literal": {
-                  "Value": "0D"
+                  "Value": "8D"
                 }
               }
             }
@@ -117,7 +117,7 @@
                 "color": {
                   "expr": {
                     "Literal": {
-                      "Value": "'#D9E0E8'"
+                      "Value": "'#263A5F'"
                     }
                   }
                 }
@@ -126,7 +126,7 @@
             "radius": {
               "expr": {
                 "Literal": {
-                  "Value": "8D"
+                  "Value": "14D"
                 }
               }
             }
@@ -192,15 +192,54 @@
             }
           }
         }
+      ],
+      "visualHeader": [
+        {
+          "properties": {
+            "background": {
+              "solid": {
+                "color": {
+                  "expr": {
+                    "Literal": {
+                      "Value": "'#12203A'"
+                    }
+                  }
+                }
+              }
+            },
+            "border": {
+              "solid": {
+                "color": {
+                  "expr": {
+                    "Literal": {
+                      "Value": "'#12203A'"
+                    }
+                  }
+                }
+              }
+            },
+            "foreground": {
+              "solid": {
+                "color": {
+                  "expr": {
+                    "Literal": {
+                      "Value": "'#9DB0CE'"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
       ]
     }
   },
   "position": {
     "x": 854,
     "y": 136,
-    "z": 8000,
+    "z": 9000,
     "height": 572,
     "width": 403,
-    "tabOrder": 8000
+    "tabOrder": 9000
   }
 }

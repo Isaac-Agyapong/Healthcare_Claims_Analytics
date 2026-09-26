@@ -38,7 +38,8 @@ BASE_THEME_SRC = Path(r"C:\Program Files\WindowsApps\Microsoft.MicrosoftPowerBID
 CUSTOM_THEME = "ClaimsPortfolioTheme.json"
 
 # PALETTE-V2: blue = claims / paid, crimson = denials, amber = flagged providers, slate/grey = neutral
-BLUE, CRIMSON, AMBER, SLATE, GREY = "#2F6DB5", "#C0392B", "#C98A12", "#5B6B7F", "#C9D1DB"
+# DARK-THEME palette: cyan = claims / paid, rose = denials, gold = flagged providers
+BLUE, CRIMSON, AMBER, SLATE, GREY = "#38BDF8", "#FB7185", "#FBBF24", "#94A3B8", "#3A4E72"
 FACT = "claims_clean"
 
 
@@ -153,7 +154,7 @@ MEASURES = [
      "CALCULATE ( [Denial Rate], KEEPFILTERS ( DimDate[Date] < DATE ( 2025, 12, 1 ) ) )", PCT, "Rates"),
     ("Denied Share of Billed", "DIVIDE ( [Denied Billed $], [Total Billed] )", PCT, "Money"),
     ("Reason Colour",
-     'IF ( SELECTEDVALUE ( claims_clean[denial_reason] ) = "Missing prior authorization", "#C0392B", "#E6A59E" )',
+     'IF ( SELECTEDVALUE ( claims_clean[denial_reason] ) = "Missing prior authorization", "#FB7185", "#7C4A5E" )',
      None, "Denials"),
     ("In-Network Denial Rate", 'CALCULATE ( [Denial Rate], providers_clean[network_status] = "In-Network" )', PCT, "Rates"),
     ("Out-of-Network Denial Rate", 'CALCULATE ( [Denial Rate], providers_clean[network_status] = "Out-of-Network" )',
@@ -312,17 +313,17 @@ def build_model():
 # =====================================================================
 # Report (PBIR)
 #
-# Visual identity (deliberately different from the opioid project, same quality rules):
-#   * full-width navy top bar with the page navigator in it; no side rail
-#   * left-aligned section label + headline sentence under the bar, filters on the right
-#   * KPI cards with a vertical accent on the left, big number, label and context line
-#   * slate background with a faint diagonal grid; white tiles, 8px corners
-#   * one colour, one meaning: blue = claims / paid, crimson = denials / revenue at risk,
-#     amber = flagged providers, greys = everything else
+# Visual identity: dark "command centre" theme (deliberately unlike the light opioid project):
+#   * deep-navy page with glowing colour blooms and a faint network-of-nodes background
+#   * dark glass tiles with rounded corners; KPI cards glow in their accent colour
+#   * title and pill-shaped page navigation float on the background (no bars, no rail)
+#   * one colour, one meaning: cyan = claims / paid, rose = denials / revenue at risk,
+#     gold = flagged providers, slate = everything else
 # =====================================================================
-NAVY, NAVY_2, SKY = "#14263F", "#23405F", "#4A90D9"
-PAGE_BG, TILE_BORDER, INK, INK_2 = "#EDF1F5", "#D9E0E8", "#111C2B", "#566273"
-TOP = 136                         # content starts under the bar and the headline row
+SKY = BLUE                                     # accent for labels and lines
+PAGE_BG, TILE, TILE_2, TILE_BORDER = "#0B1426", "#12203A", "#18294A", "#263A5F"
+INK, INK_2 = "#EAF1FB", "#9DB0CE"
+TOP = 136                         # content starts under the title and the headline row
 
 
 def lit(value):
@@ -371,17 +372,24 @@ def projections(fields):
     return {"projections": out}
 
 
-def tile(title=None, subtitle=None, background="#FFFFFF", border=True, pad=(12, 10, 14, 14), radius=8):
+def tile(title=None, subtitle=None, background=TILE, border=True, pad=(12, 10, 14, 14), radius=14, glow=None,
+         transparency=8):
     objs = {
-        "background": [{"properties": {"show": lit("true"), "color": solid(background), "transparency": lit("0D")}}],
+        "background": [{"properties": {"show": lit("true"), "color": solid(background),
+                                       "transparency": lit(f"{transparency}D")}}],
         "border": [{"properties": {"show": lit("true" if border else "false"), "color": solid(TILE_BORDER),
                                    "radius": lit(f"{radius}D")}}],
-        "dropShadow": [{"properties": {"show": lit("false")}}],
+        "dropShadow": [{"properties": {"show": lit("false")}}] if not glow else [{"properties": {
+            "show": lit("true"), "color": solid(glow), "position": s("Outer"), "preset": s("Custom"),
+            "transparency": lit("55D"), "shadowBlur": lit("16D"), "shadowSpread": lit("1D"),
+            "shadowDistance": lit("0D"), "angle": lit("90D")}}],
         "padding": [{"properties": {"top": lit(f"{pad[0]}D"), "bottom": lit(f"{pad[1]}D"),
                                     "left": lit(f"{pad[2]}D"), "right": lit(f"{pad[3]}D")}}],
         "title": [{"properties": {"show": lit("true" if title else "false"), **({
             "text": s(title), "fontColor": solid(INK), "fontSize": lit("14D"), "bold": lit("true"),
             "fontFamily": s("Segoe UI Semibold")} if title else {})}}],
+        "visualHeader": [{"properties": {"background": solid(TILE), "border": solid(TILE),
+                                         "foreground": solid(INK_2)}}],
     }
     if subtitle:
         objs["subTitle"] = [{"properties": {"show": lit("true"), "text": s(subtitle), "fontColor": solid(INK_2),
@@ -407,9 +415,10 @@ def chart(vtype, roles, title, subtitle=None, sort=None, objects=None):
             objects.setdefault(axis, [{"properties": {}}])
             objects[axis][0]["properties"].setdefault("showAxisTitle", lit("false"))
             objects[axis][0]["properties"].setdefault("fontSize", lit("11D"))
-            objects[axis][0]["properties"].setdefault("labelColor", solid(INK_2))
+            objects[axis][0]["properties"]["labelColor"] = solid(INK_2)
     if "legend" in objects:
         objects["legend"][0]["properties"].setdefault("fontSize", lit("11D"))
+        objects["legend"][0]["properties"]["labelColor"] = solid(INK)
     v = {"visualType": vtype,
          "query": {"queryState": {role: projections(f) for role, f in roles.items()}},
          "visualContainerObjects": tile(title, subtitle),
@@ -423,7 +432,7 @@ def chart(vtype, roles, title, subtitle=None, sort=None, objects=None):
     return v
 
 
-def textbox(paragraphs, background=None, pad=(8, 6, 12, 12), border=False, radius=8, align=None):
+def textbox(paragraphs, background=None, pad=(8, 6, 12, 12), border=False, radius=14, align=None, glow=None):
     def run(t, size, bold, col):
         return {"value": t, "textStyle": {"fontSize": f"{size}pt", "color": col,
                                           **({"fontWeight": "bold"} if bold else {})}}
@@ -431,8 +440,8 @@ def textbox(paragraphs, background=None, pad=(8, 6, 12, 12), border=False, radiu
               **({"horizontalTextAlignment": align} if align else {})} for p in paragraphs if p]
     v = {"visualType": "textbox", "drillFilterOtherVisuals": True,
          "objects": {"general": [{"properties": {"paragraphs": paras}}]}}
-    v["visualContainerObjects"] = tile(background=background, border=border, pad=pad, radius=radius) if background \
-        else {"background": [{"properties": {"show": lit("false")}}]}
+    v["visualContainerObjects"] = tile(background=background, border=border, pad=pad, radius=radius, glow=glow) \
+        if background else {"background": [{"properties": {"show": lit("false")}}]}
     return v
 
 
@@ -442,7 +451,9 @@ def card(measure, label, value_colour=INK, size=28, show_label=True, pad=(4, 2, 
                                                 "fontFamily": s("Segoe UI Semibold")}}],
                      "categoryLabels": [{"properties": {"show": lit("true" if show_label else "false"),
                                                         "color": solid(INK_2), "fontSize": lit("12D")}}]},
-         "visualContainerObjects": tile(border=False, pad=pad),
+         "visualContainerObjects": {"background": [{"properties": {"show": lit("false")}}],
+                                    "padding": [{"properties": {"top": lit(f"{pad[0]}D"), "bottom": lit(f"{pad[1]}D"),
+                                                                "left": lit(f"{pad[2]}D"), "right": lit(f"{pad[3]}D")}}]},
          "drillFilterOtherVisuals": True}
     v["query"]["queryState"]["Values"]["projections"][0]["displayName"] = label
     return v
@@ -451,9 +462,10 @@ def card(measure, label, value_colour=INK, size=28, show_label=True, pad=(4, 2, 
 def slicer(entity, prop, title):
     return {"visualType": "slicer", "query": {"queryState": {"Values": projections([C(entity, prop)])}},
             "objects": {"data": [{"properties": {"mode": s("Dropdown")}}],
-                        "header": [{"properties": {"text": s(title), "fontColor": solid(INK), "bold": lit("true"),
+                        "header": [{"properties": {"text": s(title), "fontColor": solid(INK_2), "bold": lit("true"),
                                                    "fontSize": lit("10D")}}],
-                        "items": [{"properties": {"fontSize": lit("11D")}}]},
+                        "items": [{"properties": {"fontSize": lit("11D"), "fontColor": solid(INK),
+                                                  "background": solid(TILE_2)}}]},
             "visualContainerObjects": tile(pad=(4, 4, 10, 10)), "drillFilterOtherVisuals": True}
 
 
@@ -461,15 +473,16 @@ def navigator():
     state = lambda sid, props: {"properties": props, "selector": {"id": sid}}
     return {"visualType": "pageNavigator", "drillFilterOtherVisuals": True,
             "objects": {
-                "layout": [{"properties": {"orientation": lit("0D"), "cellPadding": lit("8L")}}],
+                "layout": [{"properties": {"orientation": lit("0D"), "cellPadding": lit("10L")}}],
                 "pages": [{"properties": {"showHiddenPages": lit("false"), "showTooltipPages": lit("false")}}],
-                "shape": [{"properties": {"tileShape": s("rectangleRounded"), "rectangleRoundedCurve": lit("16L")}}],
-                "fill": [state("default", {"show": lit("true"), "fillColor": solid(NAVY_2), "transparency": lit("0D")}),
-                         state("hover", {"fillColor": solid("#2E5378")}),
-                         state("selected", {"fillColor": solid(SKY)})],
-                "text": [state("default", {"fontColor": solid("#D5E0EE"), "fontSize": lit("11D")}),
-                         state("selected", {"fontColor": solid("#FFFFFF"), "bold": lit("true")})],
-                "outline": [state("default", {"show": lit("false")})],
+                "shape": [{"properties": {"tileShape": s("rectangleRounded"), "rectangleRoundedCurve": lit("20L")}}],
+                "fill": [state("default", {"show": lit("true"), "fillColor": solid(TILE_2), "transparency": lit("0D")}),
+                         state("hover", {"fillColor": solid("#22385F")}),
+                         state("selected", {"fillColor": solid(BLUE)})],
+                "text": [state("default", {"fontColor": solid(INK_2), "fontSize": lit("11D")}),
+                         state("selected", {"fontColor": solid(PAGE_BG), "bold": lit("true")})],
+                "outline": [state("default", {"show": lit("true"), "lineColor": solid(TILE_BORDER), "weight": lit("1D")}),
+                            state("selected", {"show": lit("false")})],
             },
             "visualContainerObjects": {"background": [{"properties": {"show": lit("false")}}]}}
 
@@ -501,23 +514,25 @@ class Page:
 
 
 def frame(page, section, headline, filters=True):
-    """Navy top bar with navigation, then the section label and headline, filters on the right."""
-    page.add("topBar", 0, 0, 1280, 64, textbox(
-        [("Healthcare Claims Analytics", 18, True, "#FFFFFF"),
+    """Title and pill navigation floating on the dark background, then section label + headline + filters."""
+    page.add("title", 20, 4, 660, 66, textbox(
+        [[("Healthcare Claims ", 20, True, INK), ("Analytics", 20, True, BLUE)],
          ("Where is claim revenue being lost?   ·   50,000 synthetic claims, 2024-2025   ·   Built by Isaac Agyapong",
-          9, False, "#AFC3DA")], background=NAVY, radius=0, pad=(8, 0, 24, 12)))
-    page.add("navigator", 700, 12, 556, 40, navigator())
-    page.add("topAccent", 0, 64, 1280, 4, textbox([None], background=SKY, radius=0, pad=(0, 0, 0, 0)))
+          9, False, INK_2)], pad=(0, 0, 4, 4)))
+    page.add("titleAccentA", 24, 70, 64, 3, textbox([None], background=BLUE, radius=0, pad=(0, 0, 0, 0), border=False))
+    page.add("titleAccentB", 92, 70, 28, 3, textbox([None], background=CRIMSON, radius=0, pad=(0, 0, 0, 0), border=False))
+    page.add("navigator", 700, 14, 556, 42, navigator())
     page.add("headline", 24, 76, 860 if filters else 1232, 56, textbox(
-        [(section.upper(), 10, True, "#2F6DB5"), (headline, 16, True, INK)], pad=(4, 0, 4, 4)))
+        [(section.upper(), 10, True, BLUE), (headline, 16, True, INK)], pad=(4, 0, 4, 4)))
     if filters:
         page.add("slicerYear", 896, 78, 176, 52, slicer("DimDate", "Year", "Year"))
         page.add("slicerPlan", 1084, 78, 172, 52, slicer("patients_clean", "plan_type", "Plan type"))
 
 
 def kpi(page, i, x, y, w, measure, label, context, colour, h=120, size=28):
-    page.add(f"kpiTile{i}", x, y, w, h, textbox([None], background="#FFFFFF", border=True))
-    page.add(f"kpiAccent{i}", x + 1, y + 14, 5, h - 28, textbox([None], background=colour, radius=0, pad=(0, 0, 0, 0)))
+    # glowing card: the glow colour is the KPI's meaning colour
+    page.add(f"kpiTile{i}", x, y, w, h, textbox([None], background=TILE, border=True, glow=colour))
+    page.add(f"kpiAccent{i}", x + 16, y + 1, 48, 3, textbox([None], background=colour, radius=0, pad=(0, 0, 0, 0)))
     page.add(f"kpi{i}", x + 8, y + 6, w - 12, h - 38, card(measure, label, value_colour=colour, size=size))
     page.add(f"kpiContext{i}", x + 8, y + h - 34, w - 12, 28,
              card(context, "", value_colour=INK_2, size=11, show_label=False, pad=(0, 0, 12, 12)))
@@ -530,8 +545,12 @@ def data_bar(measure, colour):
             "selector": {"metadata": f"{FACT}.{measure}"}}
 
 
-TABLE_TEXT = {"values": [{"properties": {"fontSize": lit("11D")}}],
-              "columnHeaders": [{"properties": {"fontSize": lit("11D"), "bold": lit("true")}}],
+TABLE_TEXT = {"values": [{"properties": {"fontSize": lit("11D"), "fontColorPrimary": solid(INK),
+                                         "fontColorSecondary": solid(INK), "backColorPrimary": solid(TILE),
+                                         "backColorSecondary": solid(TILE_2)}}],
+              "columnHeaders": [{"properties": {"fontSize": lit("11D"), "bold": lit("true"), "fontColor": solid(INK_2),
+                                                "backColor": solid(TILE)}}],
+              "grid": [{"properties": {"gridHorizontal": lit("false"), "outlineColor": solid(TILE_BORDER)}}],
               "total": [{"properties": {"totals": lit("false")}}]}
 
 
@@ -570,7 +589,7 @@ def build_pages():
                                                   "labelColor": solid(INK)}}],
                  "dataPoint": [{"properties": {"fill": {"solid": {"color": {"expr": field(FACT, "Reason Colour", True)}}}},
                                 "selector": {"data": [{"dataViewWildcard": {"matchingOption": 1}}]}}]}))
-    status_colours = {"Paid": BLUE, "Denied": CRIMSON, "Pending": "#B8C2CE"}
+    status_colours = {"Paid": BLUE, "Denied": CRIMSON, "Pending": "#475569"}
     p1.add("statusDonut", 980, 268, 276, 440, chart(
         "donutChart", {"Category": [C(FACT, "claim_status")], "Y": [MN("Total Claims", "Claims")]},
         "Where every claim ended up", "All 50,000 claims by status",
@@ -608,7 +627,7 @@ def build_pages():
         "tableEx", {"Values": [C(FACT, "denial_reason"), MN("Denials 2024", "2024"), MN("Denials 2025", "2025"),
                                MN("Denials YoY %", "Change"), MN("Denied Billed $", "Denied $")]},
         "Denials by reason, 2024 vs. 2025", None, sort=(M("Denied Billed $"), "Descending"),
-        objects={**TABLE_TEXT, "columnFormatting": [data_bar("Denied Billed $", "#F0B5AE")]}))
+        objects={**TABLE_TEXT, "columnFormatting": [data_bar("Denied Billed $", "#8A3A4C")]}))
 
     # ---------------------------------------------------------------- 3. Providers
     p3 = Page("providers", "Providers")
@@ -635,7 +654,7 @@ def build_pages():
                                MN("Denial Rate", "Denial rate"), MN("Peer Denial Rate", "Peer rate"),
                                MN("Excess Denial (pts)", "Pts above peers")]},
         "Every provider vs. its peers", None, sort=(M("Excess Denial (pts)"), "Descending"),
-        objects={**TABLE_TEXT, "columnFormatting": [data_bar("Excess Denial (pts)", "#F2D49B")]}))
+        objects={**TABLE_TEXT, "columnFormatting": [data_bar("Excess Denial (pts)", "#8A6A1C")]}))
     p3.no_filter += [("topProviders", "providerTable")]
 
     # ---------------------------------------------------------------- 4. Data notes
@@ -660,8 +679,8 @@ def build_pages():
         x = 24 + i * 415
         p4.add(f"notes{i + 1}", x, TOP, 403, 572, textbox(
             [(heading, 18, True, INK)] + [("•  " + t, 13, False, INK) for t in lines],
-            background="#FFFFFF", border=True, pad=(18, 12, 20, 20)))
-        p4.add(f"notesAccent{i + 1}", x + 1, TOP + 18, 5, 40, textbox([None], background=SKY, radius=0,
+            background=TILE, border=True, pad=(18, 12, 20, 20)))
+        p4.add(f"notesAccent{i + 1}", x + 18, TOP + 1, 60, 3, textbox([None], background=SKY, radius=0,
                                                                      pad=(0, 0, 0, 0)))
     return [p1, p2, p3, p4]
 
@@ -692,8 +711,9 @@ def build_report():
     shutil.copy(BASE_THEME_SRC, static / "SharedResources" / "BaseThemes" / f"{BASE_THEME}.json")
     write_json(static / "RegisteredResources" / CUSTOM_THEME, {
         "name": "Claims Portfolio",
-        "dataColors": [BLUE, CRIMSON, AMBER, SLATE, "#7FA7D9", "#E6A59E", "#8A9BB0", "#3E5C7E"],
-        "foreground": "#0B0B0B", "foregroundNeutralSecondary": "#52514E", "background": "#FFFFFF",
+        "dataColors": [BLUE, CRIMSON, AMBER, SLATE, "#818CF8", "#34D399", "#F472B6", "#60A5FA"],
+        "foreground": "#EAF1FB", "foregroundNeutralSecondary": "#9DB0CE", "background": "#12203A",
+        "backgroundLight": "#18294A", "backgroundNeutral": "#263A5F",
         "tableAccent": BLUE, "good": "#0CA30C", "neutral": "#FAB219", "bad": "#D03B3B",
     })
     # page background image (generated by Python/make_background.py)

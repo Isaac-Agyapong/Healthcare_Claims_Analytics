@@ -1,0 +1,72 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/1.4.0/schema.json",
+  "name": "title",
+  "visual": {
+    "visualType": "textbox",
+    "drillFilterOtherVisuals": true,
+    "objects": {
+      "general": [
+        {
+          "properties": {
+            "paragraphs": [
+              {
+                "textRuns": [
+                  {
+                    "value": "Healthcare Claims ",
+                    "textStyle": {
+                      "fontSize": "20pt",
+                      "color": "#EAF1FB",
+                      "fontWeight": "bold"
+                    }
+                  },
+                  {
+                    "value": "Analytics",
+                    "textStyle": {
+                      "fontSize": "20pt",
+                      "color": "#38BDF8",
+                      "fontWeight": "bold"
+                    }
+                  }
+                ]
+              },
+              {
+                "textRuns": [
+                  {
+                    "value": "Where is claim revenue being lost?   \u00b7   50,000 synthetic claims, 2024-2025   \u00b7   Built by Isaac Agyapong",
+                    "textStyle": {
+                      "fontSize": "9pt",
+                      "color": "#9DB0CE"
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        }
+      ]
+    },
+    "visualContainerObjects": {
+      "background": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "false"
+                }
+              }
+            }
+          }
+        }
+      ]
+    }
+  },
+  "position": {
+    "x": 20,
+    "y": 4,
+    "z": 0,
+    "height": 66,
+    "width": 660,
+    "tabOrder": 0
+  }
+}

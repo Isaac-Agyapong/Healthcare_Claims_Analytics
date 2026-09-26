@@ -71,9 +71,12 @@ A 4-page report saved as a **Power BI Project (`.pbip`)** and generated from cod
 and all 44 DAX measures can be read on GitHub.
 
 **Design choices**
-- Navy top bar with page navigation, a headline sentence on every page that states the finding, and KPI cards with a context line.
-- One colour, one meaning: **blue** = claims and payments, **crimson** = denials and revenue at risk,
-  **amber** = flagged providers, grey = everything else.
+- Dark "command centre" theme: deep-navy background with a generated network-of-nodes pattern
+  ([`Python/make_background.py`](Python/make_background.py)), dark glass tiles, KPI cards that glow in their meaning colour,
+  and pill-shaped page navigation.
+- A headline sentence on every page that states the finding, and a context line on every KPI card.
+- One colour, one meaning: **cyan** = claims and payments, **rose** = denials and revenue at risk,
+  **gold** = flagged providers, slate = everything else.
 - Year and plan-type filters on every analysis page; rankings are protected from cross-filtering so they always rank all providers.
 
 **Executive summary**: KPIs, quarterly denial rate, denied dollars by reason, claim status
@@ -82,7 +85,7 @@ and all 44 DAX measures can be read on GitHub.
 **Denial drivers**: prior-auth denials by quarter, plan × network denial rates, denials by reason 2024 vs 2025
 ![Denial drivers](Image/powerbi_page2.png)
 
-**Provider scorecard**: providers ranked by points above their peer group (amber = 10+ points)
+**Provider scorecard**: providers ranked by points above their peer group (gold = 10+ points)
 ![Provider scorecard](Image/powerbi_page3.png)
 
 **Data notes**

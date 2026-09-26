@@ -1,19 +1,21 @@
 {
   "name": "Claims Portfolio",
   "dataColors": [
-    "#2F6DB5",
-    "#C0392B",
-    "#C98A12",
-    "#5B6B7F",
-    "#7FA7D9",
-    "#E6A59E",
-    "#8A9BB0",
-    "#3E5C7E"
+    "#38BDF8",
+    "#FB7185",
+    "#FBBF24",
+    "#94A3B8",
+    "#818CF8",
+    "#34D399",
+    "#F472B6",
+    "#60A5FA"
   ],
-  "foreground": "#0B0B0B",
-  "foregroundNeutralSecondary": "#52514E",
-  "background": "#FFFFFF",
-  "tableAccent": "#2F6DB5",
+  "foreground": "#EAF1FB",
+  "foregroundNeutralSecondary": "#9DB0CE",
+  "background": "#12203A",
+  "backgroundLight": "#18294A",
+  "backgroundNeutral": "#263A5F",
+  "tableAccent": "#38BDF8",
   "good": "#0CA30C",
   "neutral": "#FAB219",
   "bad": "#D03B3B"

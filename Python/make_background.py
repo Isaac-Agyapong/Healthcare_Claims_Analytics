@@ -1,6 +1,7 @@
-"""Generate the dashboard page background: a cool slate gradient with a faint diagonal grid and a soft
-blue glow in the lower-left corner. Low contrast so it frames the report without competing with it.
+"""Generate the dark dashboard background: deep-navy gradient, soft glowing colour blooms and a faint
+network-of-nodes pattern ("connected health data"). Tiles sit on top, so it only shows in the gaps.
 Output: dashboard/assets/page_background.png (1280x720, drawn at 2x for sharpness)."""
+import random
 from pathlib import Path
 
 from PIL import Image, ImageDraw, ImageFilter
@@ -9,10 +10,11 @@ ROOT = Path(__file__).resolve().parents[1]
 OUT = ROOT / "dashboard" / "assets" / "page_background.png"
 S = 2
 W, H = 1280 * S, 720 * S
-TOP, BOTTOM = (240, 243, 247), (226, 232, 240)     # slate gradient (matches the page colour #EDF1F5)
+TOP, BOTTOM = (10, 18, 36), (16, 28, 54)          # deep navy gradient (page colour #0B1426)
 
 
 def main():
+    random.seed(7)
     img = Image.new("RGB", (W, H))
     px = img.load()
     for y in range(H):
@@ -20,20 +22,30 @@ def main():
         row = tuple(round(a + (b - a) * t) for a, b in zip(TOP, BOTTOM))
         for x in range(W):
             px[x, y] = row
+    img = img.convert("RGBA")
 
-    overlay = Image.new("RGBA", (W, H), (0, 0, 0, 0))
-    d = ImageDraw.Draw(overlay)
-    # faint diagonal grid (both directions) below the top bar
-    step = 36 * S
-    for k in range(-H, W + H, step):
-        d.line([(k, 70 * S), (k + H, H + 70 * S)], fill=(47, 109, 181, 18), width=S)
-        d.line([(k, H), (k + H, 70 * S - H + H)], fill=(47, 109, 181, 12), width=S)
-    # soft glow, lower-left
+    # glowing blooms: cyan top-right, rose bottom-left, violet centre
     glow = Image.new("RGBA", (W, H), (0, 0, 0, 0))
-    ImageDraw.Draw(glow).ellipse([-260 * S, 420 * S, 520 * S, 1040 * S], fill=(74, 144, 217, 40))
-    overlay = Image.alpha_composite(overlay, glow.filter(ImageFilter.GaussianBlur(120 * S)))
+    g = ImageDraw.Draw(glow)
+    g.ellipse([880 * S, -260 * S, 1560 * S, 360 * S], fill=(56, 189, 248, 70))
+    g.ellipse([-320 * S, 380 * S, 420 * S, 1020 * S], fill=(251, 113, 133, 55))
+    g.ellipse([420 * S, 180 * S, 900 * S, 620 * S], fill=(129, 140, 248, 28))
+    img = Image.alpha_composite(img, glow.filter(ImageFilter.GaussianBlur(140 * S)))
 
-    img = Image.alpha_composite(img.convert("RGBA"), overlay)
+    # faint network of nodes and links
+    net = Image.new("RGBA", (W, H), (0, 0, 0, 0))
+    d = ImageDraw.Draw(net)
+    nodes = [(random.randint(0, W), random.randint(0, H)) for _ in range(70)]
+    for i, (x1, y1) in enumerate(nodes):
+        for x2, y2 in nodes[i + 1:]:
+            dist = ((x1 - x2) ** 2 + (y1 - y2) ** 2) ** 0.5
+            if dist < 190 * S:
+                d.line([(x1, y1), (x2, y2)], fill=(148, 190, 255, int(34 * (1 - dist / (190 * S)))), width=S)
+    for x, y in nodes:
+        r = random.choice([2, 3, 4]) * S
+        d.ellipse([x - r, y - r, x + r, y + r], fill=(160, 205, 255, 60))
+    img = Image.alpha_composite(img, net.filter(ImageFilter.GaussianBlur(0.5 * S)))
+
     OUT.parent.mkdir(parents=True, exist_ok=True)
     img.convert("RGB").resize((1280, 720), Image.LANCZOS).save(OUT, optimize=True)
     print(f"wrote {OUT.relative_to(ROOT)}")

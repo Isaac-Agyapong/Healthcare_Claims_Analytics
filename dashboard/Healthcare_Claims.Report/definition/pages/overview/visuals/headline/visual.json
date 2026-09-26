@@ -15,7 +15,7 @@
                     "value": "EXECUTIVE SUMMARY",
                     "textStyle": {
                       "fontSize": "10pt",
-                      "color": "#2F6DB5",
+                      "color": "#38BDF8",
                       "fontWeight": "bold"
                     }
                   }
@@ -27,7 +27,7 @@
                     "value": "1 in 8 decided claims is denied, putting $19M of billed charges at risk",
                     "textStyle": {
                       "fontSize": "16pt",
-                      "color": "#111C2B",
+                      "color": "#EAF1FB",
                       "fontWeight": "bold"
                     }
                   }
@@ -57,9 +57,9 @@
   "position": {
     "x": 24,
     "y": 76,
-    "z": 3000,
+    "z": 4000,
     "height": 56,
     "width": 860,
-    "tabOrder": 3000
+    "tabOrder": 4000
   }
 }

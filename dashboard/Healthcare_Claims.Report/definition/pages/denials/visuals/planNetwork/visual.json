@@ -80,7 +80,7 @@
                 "color": {
                   "expr": {
                     "Literal": {
-                      "Value": "'#FFFFFF'"
+                      "Value": "'#12203A'"
                     }
                   }
                 }
@@ -89,7 +89,7 @@
             "transparency": {
               "expr": {
                 "Literal": {
-                  "Value": "0D"
+                  "Value": "8D"
                 }
               }
             }
@@ -111,7 +111,7 @@
                 "color": {
                   "expr": {
                     "Literal": {
-                      "Value": "'#D9E0E8'"
+                      "Value": "'#263A5F'"
                     }
                   }
                 }
@@ -120,7 +120,7 @@
             "radius": {
               "expr": {
                 "Literal": {
-                  "Value": "8D"
+                  "Value": "14D"
                 }
               }
             }
@@ -196,7 +196,7 @@
                 "color": {
                   "expr": {
                     "Literal": {
-                      "Value": "'#111C2B'"
+                      "Value": "'#EAF1FB'"
                     }
                   }
                 }
@@ -226,6 +226,45 @@
           }
         }
       ],
+      "visualHeader": [
+        {
+          "properties": {
+            "background": {
+              "solid": {
+                "color": {
+                  "expr": {
+                    "Literal": {
+                      "Value": "'#12203A'"
+                    }
+                  }
+                }
+              }
+            },
+            "border": {
+              "solid": {
+                "color": {
+                  "expr": {
+                    "Literal": {
+                      "Value": "'#12203A'"
+                    }
+                  }
+                }
+              }
+            },
+            "foreground": {
+              "solid": {
+                "color": {
+                  "expr": {
+                    "Literal": {
+                      "Value": "'#9DB0CE'"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      ],
       "subTitle": [
         {
           "properties": {
@@ -248,7 +287,7 @@
                 "color": {
                   "expr": {
                     "Literal": {
-                      "Value": "'#566273'"
+                      "Value": "'#9DB0CE'"
                     }
                   }
                 }
@@ -289,7 +328,7 @@
                 "color": {
                   "expr": {
                     "Literal": {
-                      "Value": "'#111C2B'"
+                      "Value": "'#EAF1FB'"
                     }
                   }
                 }
@@ -348,7 +387,7 @@
                 "color": {
                   "expr": {
                     "Literal": {
-                      "Value": "'#566273'"
+                      "Value": "'#9DB0CE'"
                     }
                   }
                 }
@@ -387,6 +426,17 @@
                   "Value": "11D"
                 }
               }
+            },
+            "labelColor": {
+              "solid": {
+                "color": {
+                  "expr": {
+                    "Literal": {
+                      "Value": "'#EAF1FB'"
+                    }
+                  }
+                }
+              }
             }
           }
         }
@@ -399,7 +449,7 @@
                 "color": {
                   "expr": {
                     "Literal": {
-                      "Value": "'#2F6DB5'"
+                      "Value": "'#38BDF8'"
                     }
                   }
                 }
@@ -440,7 +490,7 @@
                 "color": {
                   "expr": {
                     "Literal": {
-                      "Value": "'#C0392B'"
+                      "Value": "'#FB7185'"
                     }
                   }
                 }
@@ -497,7 +547,7 @@
                 "color": {
                   "expr": {
                     "Literal": {
-                      "Value": "'#566273'"
+                      "Value": "'#9DB0CE'"
                     }
                   }
                 }
@@ -511,9 +561,9 @@
   "position": {
     "x": 636,
     "y": 268,
-    "z": 23000,
+    "z": 24000,
     "height": 216,
     "width": 620,
-    "tabOrder": 23000
+    "tabOrder": 24000
   }
 }

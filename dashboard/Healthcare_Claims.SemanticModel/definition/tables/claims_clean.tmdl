@@ -94,7 +94,7 @@ table claims_clean
 		displayFolder: Providers
 		lineageTag: f1782f93-e602-5a0a-b763-84ac1c5ab14f
 
-	measure 'Excess Colour' = IF ( [Excess Denial (pts)] >= 10, "#C98A12", "#C9D1DB" )
+	measure 'Excess Colour' = IF ( [Excess Denial (pts)] >= 10, "#FBBF24", "#3A4E72" )
 		displayFolder: Providers
 		lineageTag: 65e9513f-cee1-5f63-948d-4e911f991909
 
@@ -140,7 +140,7 @@ table claims_clean
 		displayFolder: Money
 		lineageTag: a537c57e-ddfd-51ef-93f6-518345e25bc5
 
-	measure 'Reason Colour' = IF ( SELECTEDVALUE ( claims_clean[denial_reason] ) = "Missing prior authorization", "#C0392B", "#E6A59E" )
+	measure 'Reason Colour' = IF ( SELECTEDVALUE ( claims_clean[denial_reason] ) = "Missing prior authorization", "#FB7185", "#7C4A5E" )
 		displayFolder: Denials
 		lineageTag: 90256c34-9632-505b-a20d-85779d68050c
 
