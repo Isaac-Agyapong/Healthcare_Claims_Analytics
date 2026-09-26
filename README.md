@@ -45,14 +45,14 @@ They asked four questions:
 | Exploratory analysis | Python (matplotlib) | [`02_exploratory_analysis.ipynb`](Python/02_exploratory_analysis.ipynb): 7 charts and findings |
 | Database and analysis | SQL (SQLite) | [`SQL/`](SQL/): star schema, data-quality checks, 13 business queries → [results](SQL/query_results.md) |
 | Spreadsheet model | Excel | [`Excel/Healthcare_Claims_Analysis.xlsx`](Excel/Healthcare_Claims_Analysis.xlsx): formula-driven dashboard, provider scorecard, conditional formatting |
-| BI dashboard | Power BI (DAX) | [`dashboard/`](dashboard/): 3-page interactive report and DAX measures |
+| BI dashboard | Power BI (DAX, TMDL, PBIR) | [`dashboard/`](dashboard/): 3-page interactive report saved as a Power BI Project |
 
 **SQL skills shown:** multi-table JOINs, CTEs, CASE, conditional aggregation, window functions
 (`LAG`, `SUM() OVER`, `AVG() OVER (PARTITION BY)`, `ROW_NUMBER`, `DENSE_RANK`, `NTILE`), and a median calculated without a MEDIAN function.
 
 **Excel skills shown:** `COUNTIFS` / `SUMIFS` / `AVERAGE`, running YTD totals, structured tables, data bars, colour scales, auto-filter, charts.
 
-**Power BI skills shown:** star-schema model, date table, time intelligence (`TOTALYTD`, `SAMEPERIODLASTYEAR`), peer benchmarking with `CALCULATE` / `REMOVEFILTERS`, conditional formatting driven by a measure.
+**Power BI skills shown:** star-schema model, Power Query (M) with a folder parameter, marked date table, time intelligence (`TOTALYTD`), peer benchmarking with `CALCULATE` / `REMOVEFILTERS`, dynamic Top N with `RANKX`, conditional formatting driven by a measure, and a version-controlled PBIP project.
 
 ---
 
@@ -66,12 +66,20 @@ They asked four questions:
 
 ## Power BI dashboard
 
-<!-- Add screenshots after building the report (see dashboard/POWER_BI_GUIDE.md) -->
-<!-- ![Executive overview](Image/powerbi_page1.png) -->
-<!-- ![Denial deep dive](Image/powerbi_page2.png) -->
-<!-- ![Provider scorecard](Image/powerbi_page3.png) -->
+Saved as a **Power BI Project (`.pbip`)**, so the data model (TMDL) and every visual (PBIR JSON) can be read
+directly on GitHub. Star schema, 22 DAX measures, 3 pages. Details are in [`dashboard/POWER_BI_GUIDE.md`](dashboard/POWER_BI_GUIDE.md).
 
-Three pages: **Executive Overview**, **Denial Deep Dive** and **Provider Scorecard**. Build steps and every DAX measure are in [`dashboard/`](dashboard/).
+**Executive Overview**
+![Executive overview](Image/powerbi_page1.png)
+
+**Denial Deep Dive**
+![Denial deep dive](Image/powerbi_page2.png)
+
+**Provider Scorecard**: orange bars are providers 10+ points above their peer group
+![Provider scorecard](Image/powerbi_page3.png)
+
+To open: `dashboard/Healthcare_Claims.pbip` in Power BI Desktop. If you cloned to a different folder,
+set the `DataFolder` parameter (**Transform data → Edit parameters**) to your `Data\clean\` path, then **Refresh**.
 
 ---
 
@@ -100,7 +108,7 @@ Healthcare_Claims_Analytics/
 ├── Python/                  # generator, notebooks, SQL loader, Excel builder
 ├── SQL/                     # schema, data-quality checks, business queries, results
 ├── Excel/                   # formula-driven workbook
-├── dashboard/               # Power BI guide and DAX measures
+├── dashboard/               # Power BI project (.pbip), model, report and DAX
 ├── Image/                   # charts and screenshots
 ├── run_all.py               # rebuilds everything
 └── requirements.txt

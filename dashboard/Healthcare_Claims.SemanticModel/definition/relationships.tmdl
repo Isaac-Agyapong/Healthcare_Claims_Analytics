@@ -1,0 +1,12 @@
+relationship bcd06e3d-4ad3-579f-af9c-e1fa96d54c51
+	fromColumn: claims_clean.patient_id
+	toColumn: patients_clean.patient_id
+
+relationship 84d2355f-2866-503c-b391-aa569c69be04
+	fromColumn: claims_clean.provider_id
+	toColumn: providers_clean.provider_id
+
+relationship 1a1be0c8-8dca-58c0-a14e-d883f057e6be
+	fromColumn: claims_clean.service_date
+	toColumn: DimDate.Date
+

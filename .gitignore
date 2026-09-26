@@ -8,11 +8,11 @@ __pycache__/
 .venv/
 venv/
 
-# Office / Power BI temp files
+# Office / Power BI local files (data cache is rebuilt by Refresh)
 ~$*
 *.pbix.bak
-.pbi/localSettings.json
-.pbi/cache.abf
+**/.pbi/localSettings.json
+**/.pbi/cache.abf
 
 # OS / editor
 .DS_Store

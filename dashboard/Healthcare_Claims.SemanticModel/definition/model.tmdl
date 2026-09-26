@@ -1,0 +1,21 @@
+model Model
+	culture: en-US
+	defaultPowerBIDataSourceVersion: powerBI_V3
+	sourceQueryCulture: en-US
+	dataAccessOptions
+		legacyRedirects
+		returnErrorValuesAsNull
+
+annotation __PBI_TimeIntelligenceEnabled = 0
+
+annotation PBI_QueryOrder = ["DataFolder","claims_clean","patients_clean","providers_clean"]
+
+annotation PBI_ProTooling = ["DevMode"]
+
+ref table claims_clean
+ref table patients_clean
+ref table providers_clean
+ref table DimDate
+
+ref cultureInfo en-US
+

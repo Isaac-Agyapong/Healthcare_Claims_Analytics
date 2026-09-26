@@ -1,79 +1,109 @@
 // =====================================================================
-// Healthcare Claims Analytics: DAX measures
-// Create a blank table called _Measures (Home > Enter data > OK) and add
-// each measure below to it (Modeling > New measure). Paste one at a time.
+// Healthcare Claims Analytics: DAX measures (reference copy)
+// The live definitions are in Healthcare_Claims.SemanticModel/definition/tables/claims_clean.tmdl
+// All measures live on the claims_clean table, grouped into display folders.
 // =====================================================================
+
 
 // ---------- Volume ----------
-Total Claims = COUNTROWS ( claims_clean )
+Total Claims =
+    COUNTROWS ( claims_clean )
 
 Decided Claims =
-CALCULATE ( [Total Claims], claims_clean[claim_status] <> "Pending" )
+    CALCULATE ( [Total Claims], claims_clean[claim_status] <> "Pending" )
 
 Denied Claims =
-CALCULATE ( [Total Claims], claims_clean[claim_status] = "Denied" )
+    CALCULATE ( [Total Claims], claims_clean[claim_status] = "Denied" )
 
-Unique Patients = DISTINCTCOUNT ( claims_clean[patient_id] )
+Unique Patients =
+    DISTINCTCOUNT ( claims_clean[patient_id] )
+
 
 // ---------- Money ----------
-Total Billed = SUM ( claims_clean[billed_amount] )
+Total Billed =
+    SUM ( claims_clean[billed_amount] )
 
-Total Paid = SUM ( claims_clean[paid_amount] )
+Total Paid =
+    SUM ( claims_clean[paid_amount] )
 
 Denied Billed $ =
-CALCULATE ( [Total Billed], claims_clean[claim_status] = "Denied" )
+    CALCULATE ( [Total Billed], claims_clean[claim_status] = "Denied" )
 
-Paid to Billed % = DIVIDE ( [Total Paid], [Total Billed] )
+Paid to Billed % =
+    DIVIDE ( [Total Paid], [Total Billed] )
+
+Paid YTD =
+    TOTALYTD ( [Total Paid], DimDate[Date] )
+
 
 // ---------- Rates ----------
-Denial Rate = DIVIDE ( [Denied Claims], [Decided Claims] )
+Denial Rate =
+    DIVIDE ( [Denied Claims], [Decided Claims] )
 
-// Denial rate of all providers with the same claim type and network status.
-// Used in the provider table to show who is above their peer group.
+Denial Rate (trend) =
+    // December 2025 is left out of trend lines: most of its claims are still pending
+    IF ( MAX ( DimDate[Date] ) >= DATE ( 2025, 12, 1 ), BLANK (), [Denial Rate] )
+
+
+// ---------- Providers ----------
 Peer Denial Rate =
-VAR _type    = SELECTEDVALUE ( claims_clean[claim_type] )
-VAR _network = SELECTEDVALUE ( providers_clean[network_status] )
-RETURN
-    CALCULATE (
-        [Denial Rate],
-        REMOVEFILTERS ( providers_clean ),
-        claims_clean[claim_type] = _type,
-        providers_clean[network_status] = _network
+    // denial rate of all providers with the same claim type and network status
+    VAR _type = SELECTEDVALUE ( claims_clean[claim_type] )
+    VAR _network = SELECTEDVALUE ( providers_clean[network_status] )
+    RETURN
+        CALCULATE (
+            [Denial Rate],
+            REMOVEFILTERS ( providers_clean ),
+            claims_clean[claim_type] = _type,
+            providers_clean[network_status] = _network
+        )
+
+Excess Denial (pts) =
+    IF ( NOT ISBLANK ( [Denial Rate] ), ( [Denial Rate] - [Peer Denial Rate] ) * 100 )
+
+Excess Rank =
+    IF (
+        HASONEVALUE ( providers_clean[provider_name] ),
+        RANKX ( ALLSELECTED ( providers_clean[provider_name] ), [Excess Denial (pts)], , DESC )
     )
 
-Excess Denial (pts) = ( [Denial Rate] - [Peer Denial Rate] ) * 100
+Top 10 Excess (pts) =
+    VAR _rank = [Excess Rank]
+    RETURN IF ( NOT ISBLANK ( _rank ) && _rank <= 10, [Excess Denial (pts)] )
+
+Excess Colour =
+    IF ( [Excess Denial (pts)] >= 10, "#EB6834", "#C3C2B7" )
+
 
 // ---------- Time ----------
-Avg Days to Process = AVERAGE ( claims_clean[days_to_process] )
+Avg Days to Process =
+    AVERAGE ( claims_clean[days_to_process] )
 
-Paid YTD = TOTALYTD ( [Total Paid], 'Date'[Date] )
 
-Denials Prior Year =
-CALCULATE ( [Denied Claims], SAMEPERIODLASTYEAR ( 'Date'[Date] ) )
+// ---------- Denials ----------
+Prior Auth Denials =
+    CALCULATE ( [Denied Claims], claims_clean[denial_reason] = "Missing prior authorization" )
 
-Denials YoY % =
-DIVIDE ( [Denied Claims] - [Denials Prior Year], [Denials Prior Year] )
+Other Denials =
+    [Denied Claims] - [Prior Auth Denials]
 
-// ---------- Formatting helpers ----------
-// Colour for the provider bar chart: orange when 10+ points above peers
-Excess Colour =
-IF ( [Excess Denial (pts)] >= 10, "#EB6834", "#C3C2B7" )
+Prior Auth Denials 2024 =
+    CALCULATE ( [Prior Auth Denials], DimDate[Year] = 2024 )
 
-// Dynamic card subtitle
-Denial Rate Subtitle =
-"Denied " & FORMAT ( [Denied Claims], "#,0" ) & " of "
-    & FORMAT ( [Decided Claims], "#,0" ) & " decided claims"
+Prior Auth Denials 2025 =
+    CALCULATE ( [Prior Auth Denials], DimDate[Year] = 2025 )
 
-// =====================================================================
-// Date table: Modeling > New table, paste this, then
-// Table tools > Mark as date table > Date column = Date
-// =====================================================================
-// Date =
-// ADDCOLUMNS (
-//     CALENDAR ( DATE ( 2024, 1, 1 ), DATE ( 2025, 12, 31 ) ),
-//     "Year", YEAR ( [Date] ),
-//     "Month Number", MONTH ( [Date] ),
-//     "Month", FORMAT ( [Date], "mmm yyyy" ),
-//     "Month Sort", YEAR ( [Date] ) * 100 + MONTH ( [Date] ),
-//     "Quarter", "Q" & QUARTER ( [Date] )
-// )
+Prior Auth YoY % =
+    DIVIDE ( [Prior Auth Denials 2025] - [Prior Auth Denials 2024], [Prior Auth Denials 2024] )
+
+
+// ---------- Date table (calculated table DimDate, marked as date table) ----------
+DimDate =
+    ADDCOLUMNS (
+        CALENDAR ( DATE ( 2024, 1, 1 ), DATE ( 2025, 12, 31 ) ),
+        "Year", YEAR ( [Date] ),
+        "Month Number", MONTH ( [Date] ),
+        "Month", FORMAT ( [Date], "mmm yyyy" ),
+        "Month Sort", YEAR ( [Date] ) * 100 + MONTH ( [Date] ),
+        "Quarter", "Q" & QUARTER ( [Date] )
+    )

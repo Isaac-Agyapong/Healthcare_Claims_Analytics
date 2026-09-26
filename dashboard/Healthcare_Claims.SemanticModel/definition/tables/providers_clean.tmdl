@@ -1,0 +1,55 @@
+table providers_clean
+	lineageTag: 332f5850-a479-5a43-aba6-d78b9346f2de
+
+	column provider_id
+		dataType: string
+		lineageTag: db82d98c-776a-5382-ab44-98854a70d2ad
+		summarizeBy: none
+		sourceColumn: provider_id
+
+		annotation SummarizationSetBy = Automatic
+
+	column provider_name
+		dataType: string
+		lineageTag: f2a3b5ef-c1b0-59d3-8556-0d459a9a720f
+		summarizeBy: none
+		sourceColumn: provider_name
+
+		annotation SummarizationSetBy = Automatic
+
+	column specialty
+		dataType: string
+		lineageTag: 97071790-a6e2-5679-b755-aaf2c56bcf45
+		summarizeBy: none
+		sourceColumn: specialty
+
+		annotation SummarizationSetBy = Automatic
+
+	column state
+		dataType: string
+		lineageTag: eb50e4bc-f8af-56d1-b19a-d404a565adb8
+		summarizeBy: none
+		sourceColumn: state
+
+		annotation SummarizationSetBy = Automatic
+
+	column network_status
+		dataType: string
+		lineageTag: 2a2e1108-ad2d-57e5-b17f-06410497ad34
+		summarizeBy: none
+		sourceColumn: network_status
+
+		annotation SummarizationSetBy = Automatic
+
+	partition providers_clean = m
+		mode: import
+		source =
+				let
+				    Source = Csv.Document(File.Contents(DataFolder & "providers_clean.csv"), [Delimiter = ",", Encoding = 65001, QuoteStyle = QuoteStyle.Csv]),
+				    Promoted = Table.PromoteHeaders(Source, [PromoteAllScalars = true]),
+				    Typed = Table.TransformColumnTypes(Promoted, {{"provider_id", type text}, {"provider_name", type text}, {"specialty", type text}, {"state", type text}, {"network_status", type text}}, "en-US")
+				in
+				    Typed
+
+	annotation PBI_ResultType = Table
+

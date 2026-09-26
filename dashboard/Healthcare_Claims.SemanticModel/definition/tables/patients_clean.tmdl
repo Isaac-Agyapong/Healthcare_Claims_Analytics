@@ -1,0 +1,69 @@
+table patients_clean
+	lineageTag: 62c3abe3-561e-51ae-8fa1-f14b114bd6af
+
+	column patient_id
+		dataType: string
+		lineageTag: 2122ca6e-49f1-5860-98aa-e21ce6eded4e
+		summarizeBy: none
+		sourceColumn: patient_id
+
+		annotation SummarizationSetBy = Automatic
+
+	column gender
+		dataType: string
+		lineageTag: 5e3d2934-3764-58c8-a99a-28b558104a31
+		summarizeBy: none
+		sourceColumn: gender
+
+		annotation SummarizationSetBy = Automatic
+
+	column date_of_birth
+		dataType: dateTime
+		formatString: yyyy-mm-dd
+		lineageTag: 7134902e-d232-5979-9816-52061cdd2c86
+		summarizeBy: none
+		sourceColumn: date_of_birth
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column state
+		dataType: string
+		lineageTag: 13aa6d30-c218-579a-85c1-50f07b88f8f4
+		summarizeBy: none
+		sourceColumn: state
+
+		annotation SummarizationSetBy = Automatic
+
+	column plan_type
+		dataType: string
+		lineageTag: aaabf5da-07f3-5d48-8345-a01c2c5b1e59
+		summarizeBy: none
+		sourceColumn: plan_type
+
+		annotation SummarizationSetBy = Automatic
+
+	column enrollment_date
+		dataType: dateTime
+		formatString: yyyy-mm-dd
+		lineageTag: 78463006-4c84-5977-96ad-11bd1b8d4a45
+		summarizeBy: none
+		sourceColumn: enrollment_date
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	partition patients_clean = m
+		mode: import
+		source =
+				let
+				    Source = Csv.Document(File.Contents(DataFolder & "patients_clean.csv"), [Delimiter = ",", Encoding = 65001, QuoteStyle = QuoteStyle.Csv]),
+				    Promoted = Table.PromoteHeaders(Source, [PromoteAllScalars = true]),
+				    Typed = Table.TransformColumnTypes(Promoted, {{"patient_id", type text}, {"gender", type text}, {"date_of_birth", type date}, {"state", type text}, {"plan_type", type text}, {"enrollment_date", type date}}, "en-US")
+				in
+				    Typed
+
+	annotation PBI_ResultType = Table
+

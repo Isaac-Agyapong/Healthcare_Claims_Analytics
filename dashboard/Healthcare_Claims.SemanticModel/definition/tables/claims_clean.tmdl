@@ -1,0 +1,328 @@
+table claims_clean
+	lineageTag: 8f1eb91a-349d-5f85-a43b-3ff2bcf1ea8b
+
+	measure 'Total Claims' = COUNTROWS ( claims_clean )
+		formatString: #,0
+		displayFolder: Volume
+		lineageTag: ae7e0490-622e-5ac0-83c5-b3b7e2fd4fee
+
+	measure 'Decided Claims' = CALCULATE ( [Total Claims], claims_clean[claim_status] <> "Pending" )
+		formatString: #,0
+		displayFolder: Volume
+		lineageTag: 1ecc0bba-23e2-5c99-9bff-2a4debee8e86
+
+	measure 'Denied Claims' = CALCULATE ( [Total Claims], claims_clean[claim_status] = "Denied" )
+		formatString: #,0
+		displayFolder: Volume
+		lineageTag: 4bfee744-f9a8-597c-9712-37e0cdda4e0a
+
+	measure 'Unique Patients' = DISTINCTCOUNT ( claims_clean[patient_id] )
+		formatString: #,0
+		displayFolder: Volume
+		lineageTag: 7737cb59-b757-5a6e-a36b-f8d54daa70c2
+
+	measure 'Total Billed' = SUM ( claims_clean[billed_amount] )
+		formatString: \$#,0;(\$#,0);\$#,0
+		displayFolder: Money
+		lineageTag: aee8bbfb-9bb3-5ff7-bb2f-b970d40efe4a
+
+	measure 'Total Paid' = SUM ( claims_clean[paid_amount] )
+		formatString: \$#,0;(\$#,0);\$#,0
+		displayFolder: Money
+		lineageTag: 890211d1-eb70-5933-ad00-6be243aaf537
+
+	measure 'Denied Billed $' = CALCULATE ( [Total Billed], claims_clean[claim_status] = "Denied" )
+		formatString: \$#,0;(\$#,0);\$#,0
+		displayFolder: Money
+		lineageTag: db5b8bbc-ca6e-538b-b61e-6a9bdeb4e371
+
+	measure 'Paid to Billed %' = DIVIDE ( [Total Paid], [Total Billed] )
+		formatString: 0.0%;-0.0%;0.0%
+		displayFolder: Money
+		lineageTag: bb004ce2-e816-5e54-bd8d-9f55b9c03e1b
+
+	measure 'Paid YTD' = TOTALYTD ( [Total Paid], DimDate[Date] )
+		formatString: \$#,0;(\$#,0);\$#,0
+		displayFolder: Money
+		lineageTag: 24401bb8-bbac-5066-96b8-079205f97e4b
+
+	measure 'Denial Rate' = DIVIDE ( [Denied Claims], [Decided Claims] )
+		formatString: 0.0%;-0.0%;0.0%
+		displayFolder: Rates
+		lineageTag: c62c11ad-65a2-5fc7-9502-dcbe27f7bc9a
+
+	measure 'Denial Rate (trend)' =
+			// December 2025 is left out of trend lines: most of its claims are still pending
+			IF ( MAX ( DimDate[Date] ) >= DATE ( 2025, 12, 1 ), BLANK (), [Denial Rate] )
+		formatString: 0.0%;-0.0%;0.0%
+		displayFolder: Rates
+		lineageTag: da92c8fe-d6f8-5a33-8fc3-0487857ae438
+
+	measure 'Peer Denial Rate' =
+			// denial rate of all providers with the same claim type and network status
+			VAR _type = SELECTEDVALUE ( claims_clean[claim_type] )
+			VAR _network = SELECTEDVALUE ( providers_clean[network_status] )
+			RETURN
+			    CALCULATE (
+			        [Denial Rate],
+			        REMOVEFILTERS ( providers_clean ),
+			        claims_clean[claim_type] = _type,
+			        providers_clean[network_status] = _network
+			    )
+		formatString: 0.0%;-0.0%;0.0%
+		displayFolder: Providers
+		lineageTag: bafdbf85-f247-5d80-bd7c-d109f2dfc6e3
+
+	measure 'Excess Denial (pts)' = IF ( NOT ISBLANK ( [Denial Rate] ), ( [Denial Rate] - [Peer Denial Rate] ) * 100 )
+		formatString: 0.0
+		displayFolder: Providers
+		lineageTag: f1e5783f-b386-5e75-9695-99aa439496b1
+
+	measure 'Excess Rank' =
+			IF (
+			    HASONEVALUE ( providers_clean[provider_name] ),
+			    RANKX ( ALLSELECTED ( providers_clean[provider_name] ), [Excess Denial (pts)], , DESC )
+			)
+		formatString: 0
+		displayFolder: Providers
+		lineageTag: 60da18a0-5ea2-5764-b387-245a4906bd0e
+
+	measure 'Top 10 Excess (pts)' =
+			VAR _rank = [Excess Rank]
+			RETURN IF ( NOT ISBLANK ( _rank ) && _rank <= 10, [Excess Denial (pts)] )
+		formatString: 0.0
+		displayFolder: Providers
+		lineageTag: f1782f93-e602-5a0a-b763-84ac1c5ab14f
+
+	measure 'Excess Colour' = IF ( [Excess Denial (pts)] >= 10, "#EB6834", "#C3C2B7" )
+		displayFolder: Providers
+		lineageTag: 65e9513f-cee1-5f63-948d-4e911f991909
+
+	measure 'Avg Days to Process' = AVERAGE ( claims_clean[days_to_process] )
+		formatString: 0.0
+		displayFolder: Time
+		lineageTag: 16d6a250-09b4-5033-8544-bb8ce41032c7
+
+	measure 'Prior Auth Denials' = CALCULATE ( [Denied Claims], claims_clean[denial_reason] = "Missing prior authorization" )
+		formatString: #,0
+		displayFolder: Denials
+		lineageTag: 68315d07-de75-5593-bb89-0ea9c8619dba
+
+	measure 'Other Denials' = [Denied Claims] - [Prior Auth Denials]
+		formatString: #,0
+		displayFolder: Denials
+		lineageTag: f1338acd-6f02-54a0-aae0-02223b7bdc19
+
+	measure 'Prior Auth Denials 2024' = CALCULATE ( [Prior Auth Denials], DimDate[Year] = 2024 )
+		formatString: #,0
+		displayFolder: Denials
+		lineageTag: 49278316-6842-5b0d-a9db-a98cd855c048
+
+	measure 'Prior Auth Denials 2025' = CALCULATE ( [Prior Auth Denials], DimDate[Year] = 2025 )
+		formatString: #,0
+		displayFolder: Denials
+		lineageTag: f2219d74-5a08-59c1-889b-471e17fa84b7
+
+	measure 'Prior Auth YoY %' = DIVIDE ( [Prior Auth Denials 2025] - [Prior Auth Denials 2024], [Prior Auth Denials 2024] )
+		formatString: 0.0%;-0.0%;0.0%
+		displayFolder: Denials
+		lineageTag: d225e6fc-13ae-5b5c-8d57-2d082d70a485
+
+	column claim_id
+		dataType: string
+		lineageTag: 8cd73069-7ecf-513a-b227-e1f7b9742ca5
+		summarizeBy: none
+		sourceColumn: claim_id
+
+		annotation SummarizationSetBy = Automatic
+
+	column patient_id
+		dataType: string
+		lineageTag: 5cb2fdf8-c89f-5821-8ecd-5afb9c69b51e
+		summarizeBy: none
+		sourceColumn: patient_id
+
+		annotation SummarizationSetBy = Automatic
+
+	column provider_id
+		dataType: string
+		lineageTag: e3f59419-441b-5fdc-9e62-e53f4f036d25
+		summarizeBy: none
+		sourceColumn: provider_id
+
+		annotation SummarizationSetBy = Automatic
+
+	column service_date
+		dataType: dateTime
+		formatString: yyyy-mm-dd
+		lineageTag: 98eac602-882d-50f0-8cc8-2767c33bc9db
+		summarizeBy: none
+		sourceColumn: service_date
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column submission_date
+		dataType: dateTime
+		formatString: yyyy-mm-dd
+		lineageTag: 3d088723-5ce0-5d3d-8220-e148784e2f68
+		summarizeBy: none
+		sourceColumn: submission_date
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column processed_date
+		dataType: dateTime
+		formatString: yyyy-mm-dd
+		lineageTag: 5b91deaf-efa7-501a-836a-1dc5ec283e3f
+		summarizeBy: none
+		sourceColumn: processed_date
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column claim_type
+		dataType: string
+		lineageTag: 20da6212-c0b1-5d1c-b76c-5dafb1fd2869
+		summarizeBy: none
+		sourceColumn: claim_type
+
+		annotation SummarizationSetBy = Automatic
+
+	column diagnosis_category
+		dataType: string
+		lineageTag: 802da805-2c98-5615-bd27-5caa27bbb1e0
+		summarizeBy: none
+		sourceColumn: diagnosis_category
+
+		annotation SummarizationSetBy = Automatic
+
+	column cpt_code
+		dataType: string
+		lineageTag: ad42d215-99a7-5a77-b20a-c7ebbc07bb1c
+		summarizeBy: none
+		sourceColumn: cpt_code
+
+		annotation SummarizationSetBy = Automatic
+
+	column billed_amount
+		dataType: decimal
+		formatString: \$#,0.00;(\$#,0.00);\$#,0.00
+		lineageTag: 545160fd-585a-5c6e-a84a-1775696dcd75
+		summarizeBy: sum
+		sourceColumn: billed_amount
+
+		annotation SummarizationSetBy = Automatic
+
+	column allowed_amount
+		dataType: decimal
+		formatString: \$#,0.00;(\$#,0.00);\$#,0.00
+		lineageTag: 70e83a16-cf30-593f-9036-b3f294f3721c
+		summarizeBy: sum
+		sourceColumn: allowed_amount
+
+		annotation SummarizationSetBy = Automatic
+
+	column paid_amount
+		dataType: decimal
+		formatString: \$#,0.00;(\$#,0.00);\$#,0.00
+		lineageTag: 49f1a7d3-70c7-5fd1-82e8-e887b5a78bd3
+		summarizeBy: sum
+		sourceColumn: paid_amount
+
+		annotation SummarizationSetBy = Automatic
+
+	column claim_status
+		dataType: string
+		lineageTag: 1240f977-ce38-5afd-86c9-0cb9dfd65831
+		summarizeBy: none
+		sourceColumn: claim_status
+
+		annotation SummarizationSetBy = Automatic
+
+	column denial_reason
+		dataType: string
+		lineageTag: caaf55ef-0cef-5fac-bc6f-3a98fb64a80a
+		summarizeBy: none
+		sourceColumn: denial_reason
+
+		annotation SummarizationSetBy = Automatic
+
+	column billed_imputed
+		dataType: boolean
+		lineageTag: 1b3c07c7-acfd-50f3-aa69-54787363411a
+		summarizeBy: none
+		sourceColumn: billed_imputed
+
+		annotation SummarizationSetBy = Automatic
+
+	column age_at_service
+		dataType: int64
+		formatString: 0
+		lineageTag: 49c5b45d-6a83-5b58-b7b5-18de96662992
+		summarizeBy: none
+		sourceColumn: age_at_service
+
+		annotation SummarizationSetBy = Automatic
+
+	column age_group
+		dataType: string
+		lineageTag: eafb4f87-806d-5c7b-8482-f08b7f5d2ba5
+		summarizeBy: none
+		sourceColumn: age_group
+
+		annotation SummarizationSetBy = Automatic
+
+	column days_to_submit
+		dataType: int64
+		formatString: 0
+		lineageTag: b428d860-f293-578b-9755-fcffcbc64caf
+		summarizeBy: sum
+		sourceColumn: days_to_submit
+
+		annotation SummarizationSetBy = Automatic
+
+	column days_to_process
+		dataType: double
+		formatString: 0
+		lineageTag: 38d01730-222f-543a-a5ec-c68e5768afa8
+		summarizeBy: sum
+		sourceColumn: days_to_process
+
+		annotation SummarizationSetBy = Automatic
+
+	column is_denied
+		dataType: int64
+		formatString: 0
+		lineageTag: fd4aaca2-cf46-5f58-918e-b2ef7e0011c2
+		summarizeBy: sum
+		sourceColumn: is_denied
+
+		annotation SummarizationSetBy = Automatic
+
+	column member_responsibility
+		dataType: decimal
+		formatString: \$#,0.00;(\$#,0.00);\$#,0.00
+		lineageTag: ebb64bb4-5b6a-5102-b958-af672bdf6ecc
+		summarizeBy: sum
+		sourceColumn: member_responsibility
+
+		annotation SummarizationSetBy = Automatic
+
+	partition claims_clean = m
+		mode: import
+		source =
+				let
+				    Source = Csv.Document(File.Contents(DataFolder & "claims_clean.csv"), [Delimiter = ",", Encoding = 65001, QuoteStyle = QuoteStyle.Csv]),
+				    Promoted = Table.PromoteHeaders(Source, [PromoteAllScalars = true]),
+				    Removed = Table.RemoveColumns(Promoted, {"plan_type", "specialty", "network_status", "service_month", "service_year"}),
+				    Typed = Table.TransformColumnTypes(Removed, {{"claim_id", type text}, {"patient_id", type text}, {"provider_id", type text}, {"service_date", type date}, {"submission_date", type date}, {"processed_date", type date}, {"claim_type", type text}, {"diagnosis_category", type text}, {"cpt_code", type text}, {"billed_amount", Currency.Type}, {"allowed_amount", Currency.Type}, {"paid_amount", Currency.Type}, {"claim_status", type text}, {"denial_reason", type text}, {"billed_imputed", type logical}, {"age_at_service", Int64.Type}, {"age_group", type text}, {"days_to_submit", Int64.Type}, {"days_to_process", type number}, {"is_denied", Int64.Type}, {"member_responsibility", Currency.Type}}, "en-US")
+				in
+				    Typed
+
+	annotation PBI_ResultType = Table
+
