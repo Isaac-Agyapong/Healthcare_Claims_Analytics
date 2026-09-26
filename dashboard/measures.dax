@@ -1,0 +1,79 @@
+// =====================================================================
+// Healthcare Claims Analytics: DAX measures
+// Create a blank table called _Measures (Home > Enter data > OK) and add
+// each measure below to it (Modeling > New measure). Paste one at a time.
+// =====================================================================
+
+// ---------- Volume ----------
+Total Claims = COUNTROWS ( claims_clean )
+
+Decided Claims =
+CALCULATE ( [Total Claims], claims_clean[claim_status] <> "Pending" )
+
+Denied Claims =
+CALCULATE ( [Total Claims], claims_clean[claim_status] = "Denied" )
+
+Unique Patients = DISTINCTCOUNT ( claims_clean[patient_id] )
+
+// ---------- Money ----------
+Total Billed = SUM ( claims_clean[billed_amount] )
+
+Total Paid = SUM ( claims_clean[paid_amount] )
+
+Denied Billed $ =
+CALCULATE ( [Total Billed], claims_clean[claim_status] = "Denied" )
+
+Paid to Billed % = DIVIDE ( [Total Paid], [Total Billed] )
+
+// ---------- Rates ----------
+Denial Rate = DIVIDE ( [Denied Claims], [Decided Claims] )
+
+// Denial rate of all providers with the same claim type and network status.
+// Used in the provider table to show who is above their peer group.
+Peer Denial Rate =
+VAR _type    = SELECTEDVALUE ( claims_clean[claim_type] )
+VAR _network = SELECTEDVALUE ( providers_clean[network_status] )
+RETURN
+    CALCULATE (
+        [Denial Rate],
+        REMOVEFILTERS ( providers_clean ),
+        claims_clean[claim_type] = _type,
+        providers_clean[network_status] = _network
+    )
+
+Excess Denial (pts) = ( [Denial Rate] - [Peer Denial Rate] ) * 100
+
+// ---------- Time ----------
+Avg Days to Process = AVERAGE ( claims_clean[days_to_process] )
+
+Paid YTD = TOTALYTD ( [Total Paid], 'Date'[Date] )
+
+Denials Prior Year =
+CALCULATE ( [Denied Claims], SAMEPERIODLASTYEAR ( 'Date'[Date] ) )
+
+Denials YoY % =
+DIVIDE ( [Denied Claims] - [Denials Prior Year], [Denials Prior Year] )
+
+// ---------- Formatting helpers ----------
+// Colour for the provider bar chart: orange when 10+ points above peers
+Excess Colour =
+IF ( [Excess Denial (pts)] >= 10, "#EB6834", "#C3C2B7" )
+
+// Dynamic card subtitle
+Denial Rate Subtitle =
+"Denied " & FORMAT ( [Denied Claims], "#,0" ) & " of "
+    & FORMAT ( [Decided Claims], "#,0" ) & " decided claims"
+
+// =====================================================================
+// Date table: Modeling > New table, paste this, then
+// Table tools > Mark as date table > Date column = Date
+// =====================================================================
+// Date =
+// ADDCOLUMNS (
+//     CALENDAR ( DATE ( 2024, 1, 1 ), DATE ( 2025, 12, 31 ) ),
+//     "Year", YEAR ( [Date] ),
+//     "Month Number", MONTH ( [Date] ),
+//     "Month", FORMAT ( [Date], "mmm yyyy" ),
+//     "Month Sort", YEAR ( [Date] ) * 100 + MONTH ( [Date] ),
+//     "Quarter", "Q" & QUARTER ( [Date] )
+// )

@@ -1,0 +1,251 @@
+provider_id,provider_name,specialty,state,network_status
+PR0001,Pinecrest Center, PEDIATRICS ,GA,In-Network
+PR0002,Harbor Associates,Radiology,NC,In-Network
+PR0003,Silver Health, EMERGENCY MEDICINE ,NY,In-Network
+PR0004,Meadow Regional Hospital,Hospital,CA,In-Network
+PR0005,Highland Associates,Primary Care,TX,In-Network
+PR0006,Pinecrest Group,Emergency Medicine,OH,In-Network
+PR0007,Maple Clinic,Behavioral Health,FL,In-Network
+PR0008,Willow Regional Hospital,Hospital,GA,In-Network
+PR0009,Lakeshore Group,Emergency Medicine,GA,In-Network
+PR0010,Sunrise Partners,Oncology,OH,In-Network
+PR0011,Valley Center,Emergency Medicine,NC,Out-of-Network
+PR0012,Highland Group, PEDIATRICS ,GA,In-Network
+PR0013,Lakeshore Medical,Emergency Medicine,FL,In-Network
+PR0014,Meadow Group,Emergency Medicine,FL,In-Network
+PR0015,Keystone Regional Hospital,Hospital,NC,In-Network
+PR0016,Bayview Partners,Pediatrics,NY,Out-of-Network
+PR0017,Oakwood Care,Emergency Medicine,NC,In-Network
+PR0018,Crescent Partners,Primary Care,NC,In-Network
+PR0019,Coastal Health,Emergency Medicine,PA,Out-of-Network
+PR0020,Keystone Memorial Hospital,Hospital,TX,In-Network
+PR0021,Unity Health, PRIMARY CARE ,PA,In-Network
+PR0022,Magnolia Group,Behavioral Health,TX,In-Network
+PR0023,Maple Associates, RADIOLOGY ,NC,In-Network
+PR0024,Cedar Care,Emergency Medicine,CA,In-Network
+PR0025,Highland Partners,Primary Care,IL,In-Network
+PR0026,Cedar Regional Hospital,Hospital,TX,In-Network
+PR0027,Harbor Regional Hospital,Hospital,NC,In-Network
+PR0028,Northgate Specialists,Radiology,CA,Out-of-Network
+PR0029,Evergreen Group,Orthopedics,AZ,In-Network
+PR0030,Palm Clinic,Behavioral Health,FL,In-Network
+PR0031,Prairie Partners,Primary Care,CA,In-Network
+PR0032,Valley Medical,Emergency Medicine,GA,In-Network
+PR0033,Magnolia Medical,Primary Care,IL,In-Network
+PR0034,Valley Clinic,Cardiology,OH,Out-of-Network
+PR0035,Harbor Specialists,Primary Care,NC,In-Network
+PR0036,Silver Medical,Radiology,NY,In-Network
+PR0037,Palm Associates,Behavioral Health,NC,Out-of-Network
+PR0038,Bayview Specialists,Radiology,CA,In-Network
+PR0039,Magnolia Clinic,Primary Care,GA,In-Network
+PR0040,Riverside Care,Cardiology,PA,Out-of-Network
+PR0041,Brookside Health,Cardiology,NY,In-Network
+PR0042,Liberty Group,Behavioral Health,GA,In-Network
+PR0043,Liberty Specialists,Primary Care,NC,Out-of-Network
+PR0044,Meadow Center,Behavioral Health,FL,Out-of-Network
+PR0045,Heritage Partners,Cardiology,NC,Out-of-Network
+PR0046,Liberty Regional Hospital,Hospital,NY,In-Network
+PR0047,Palm Center,Orthopedics,CA,Out-of-Network
+PR0048,Meadow Specialists,Primary Care,FL,In-Network
+PR0049,Cedar Partners,Primary Care,NC,In-Network
+PR0050,Valley Associates,Pediatrics,NC,In-Network
+PR0051,Horizon Specialists,Pediatrics,OH,In-Network
+PR0052,Unity Medical,Emergency Medicine,NY,In-Network
+PR0053,Heritage Health,Radiology,CA,Out-of-Network
+PR0054,Evergreen Associates, PRIMARY CARE ,CA,In-Network
+PR0055,Harbor Memorial Hospital, HOSPITAL ,GA,In-Network
+PR0056,Riverside Partners,Primary Care,FL,In-Network
+PR0057,Sunrise Clinic,Emergency Medicine,TX,In-Network
+PR0058,Coastal Group,Primary Care,PA,In-Network
+PR0059,Lakeshore Care,Cardiology,TX,In-Network
+PR0060,Summit Partners,Emergency Medicine,OH,In-Network
+PR0061,Brookside Partners, PEDIATRICS ,CA,In-Network
+PR0062,Heritage Medical, PRIMARY CARE ,TX,In-Network
+PR0063,Coastal Associates,Emergency Medicine,FL,In-Network
+PR0064,Crescent Specialists,Radiology,TX,In-Network
+PR0065,Bayview Regional Hospital, HOSPITAL ,TX,In-Network
+PR0066,Riverside Health,Behavioral Health,FL,In-Network
+PR0067,Northgate Medical,Primary Care,PA,In-Network
+PR0068,Cypress Specialists,Behavioral Health,AZ,In-Network
+PR0069,Lakeshore Clinic,Emergency Medicine,FL,In-Network
+PR0070,Unity Group, PRIMARY CARE ,GA,In-Network
+PR0071,Willow Clinic,Primary Care,CA,In-Network
+PR0072,Heritage Group,Radiology,AZ,In-Network
+PR0073,Highland Specialists, EMERGENCY MEDICINE ,IL,In-Network
+PR0074,Oakwood Health,Cardiology,IL,In-Network
+PR0075,Horizon Center,Radiology,NY,In-Network
+PR0076,Heritage Center,Primary Care,AZ,In-Network
+PR0077,Meadow Medical,Orthopedics,TX,In-Network
+PR0078,Summit Clinic,Radiology,FL,Out-of-Network
+PR0079,Summit Health,Primary Care,NC,In-Network
+PR0080,Lakeshore Health,Cardiology,CA,In-Network
+PR0081,Sunrise Associates,Behavioral Health,OH,Out-of-Network
+PR0082,Golden Care, CARDIOLOGY ,CA,In-Network
+PR0083,Willow Memorial Hospital,Hospital,PA,In-Network
+PR0084,Prairie Regional Hospital,Hospital,TX,In-Network
+PR0085,Pinecrest Clinic,Behavioral Health,GA,In-Network
+PR0086,Sunrise Group, EMERGENCY MEDICINE ,OH,In-Network
+PR0087,Oakwood Regional Hospital,Hospital,NY,In-Network
+PR0088,Evergreen Center,Radiology,FL,Out-of-Network
+PR0089,Prairie Associates,Emergency Medicine,TX,In-Network
+PR0090,Highland Care,Primary Care,OH,In-Network
+PR0091,Cedar Clinic,Emergency Medicine,IL,In-Network
+PR0092,Brookside Specialists,Pediatrics,OH,Out-of-Network
+PR0093,Silver Center,Primary Care,NC,In-Network
+PR0094,Pinecrest Associates,Behavioral Health,PA,In-Network
+PR0095,Crescent Associates,Pediatrics,GA,In-Network
+PR0096,Bayview Medical,Primary Care,CA,In-Network
+PR0097,Horizon Partners,Behavioral Health,CA,In-Network
+PR0098,Unity Associates, PRIMARY CARE ,IL,In-Network
+PR0099,Unity Regional Hospital,Hospital,FL,In-Network
+PR0100,Magnolia Regional Hospital,Hospital,AZ,In-Network
+PR0101,Valley Care,Radiology,NC,In-Network
+PR0102,Silver Clinic,Pediatrics,FL,Out-of-Network
+PR0103,Willow Partners,Behavioral Health,NY,In-Network
+PR0104,Silver Care,Primary Care,FL,Out-of-Network
+PR0105,Sunrise Medical,Behavioral Health,CA,Out-of-Network
+PR0106,Coastal Specialists,Pediatrics,NY,In-Network
+PR0107,Bayview Associates,Orthopedics,OH,In-Network
+PR0108,Brookside Clinic,Primary Care,CA,In-Network
+PR0109,Lakeshore Regional Hospital,Hospital,OH,In-Network
+PR0110,Riverside Medical, PRIMARY CARE ,TX,In-Network
+PR0111,Sunrise Health,Orthopedics,PA,Out-of-Network
+PR0112,Oakwood Group,Pediatrics,PA,In-Network
+PR0113,Silver Associates,Oncology,CA,Out-of-Network
+PR0114,Willow General Hospital,Hospital,GA,In-Network
+PR0115,Pinecrest Health,Primary Care,AZ,Out-of-Network
+PR0116,Pinecrest Specialists, PRIMARY CARE ,PA,In-Network
+PR0117,Cypress Health,Primary Care,PA,In-Network
+PR0118,Northgate Center,Behavioral Health,FL,Out-of-Network
+PR0119,Northgate Care,Behavioral Health,PA,In-Network
+PR0120,Summit Center,Emergency Medicine,GA,In-Network
+PR0121,Brookside Associates,Emergency Medicine,NY,In-Network
+PR0122,Maple Partners,Primary Care,NC,Out-of-Network
+PR0123,Summit Regional Hospital,Hospital,TX,In-Network
+PR0124,Liberty Care,Emergency Medicine,GA,In-Network
+PR0125,Oakwood Clinic, BEHAVIORAL HEALTH ,NY,In-Network
+PR0126,Horizon Group,Cardiology,GA,In-Network
+PR0127,Silver Specialists,Radiology,CA,In-Network
+PR0128,Bayview Group,Behavioral Health,FL,In-Network
+PR0129,Summit Medical,Cardiology,TX,In-Network
+PR0130,Golden Medical,Primary Care,CA,In-Network
+PR0131,Summit Specialists,Behavioral Health,AZ,In-Network
+PR0132,Cypress Care,Behavioral Health,NY,In-Network
+PR0133,Oakwood Specialists,Primary Care,TX,In-Network
+PR0134,Pinecrest Regional Hospital, HOSPITAL ,AZ,In-Network
+PR0135,Unity Clinic,Primary Care,IL,In-Network
+PR0136,Silver Partners,Pediatrics,NC,In-Network
+PR0137,Maple Specialists,Cardiology,CA,Out-of-Network
+PR0138,Highland Center, RADIOLOGY ,GA,In-Network
+PR0139,Keystone Care,Primary Care,CA,Out-of-Network
+PR0140,Horizon Medical,Radiology,PA,In-Network
+PR0141,Coastal Medical, ORTHOPEDICS ,AZ,In-Network
+PR0142,Cedar Group,Primary Care,FL,In-Network
+PR0143,Coastal Clinic,Primary Care,GA,In-Network
+PR0144,Riverside Group,Orthopedics,IL,Out-of-Network
+PR0145,Riverside Center,Orthopedics,PA,In-Network
+PR0146,Heritage Associates,Primary Care,NC,In-Network
+PR0147,Valley Partners,Orthopedics,FL,In-Network
+PR0148,Horizon Health,Oncology,NC,In-Network
+PR0149,Keystone General Hospital,Hospital,NY,In-Network
+PR0150,Riverside Specialists,Radiology,TX,In-Network
+PR0151,Keystone Health,Primary Care,GA,Out-of-Network
+PR0152,Crescent Clinic,Orthopedics,TX,In-Network
+PR0153,Cypress Partners,Primary Care,NY,In-Network
+PR0154,Prairie Medical,Oncology,FL,In-Network
+PR0155,Northgate Associates,Cardiology,NY,Out-of-Network
+PR0156,Heritage Regional Hospital,Hospital,FL,Out-of-Network
+PR0157,Highland Clinic,Orthopedics,TX,Out-of-Network
+PR0158,Cypress Center,Emergency Medicine,AZ,In-Network
+PR0159,Harbor Health,Behavioral Health,NC,In-Network
+PR0160,Cedar Associates,Cardiology,FL,Out-of-Network
+PR0161,Brookside Care,Pediatrics,NC,In-Network
+PR0162,Keystone Associates,Primary Care,FL,In-Network
+PR0163,Maple Center,Emergency Medicine,NY,Out-of-Network
+PR0164,Golden Regional Hospital,Hospital,GA,In-Network
+PR0165,Keystone Clinic,Cardiology,IL,In-Network
+PR0166,Willow Specialists,Orthopedics,FL,In-Network
+PR0167,Oakwood Partners,Pediatrics,IL,In-Network
+PR0168,Magnolia Center,Orthopedics,NC,Out-of-Network
+PR0169,Evergreen Regional Hospital,Hospital,TX,In-Network
+PR0170,Valley Group,Primary Care,PA,In-Network
+PR0171,Maple Health,Pediatrics,TX,In-Network
+PR0172,Horizon Associates,Radiology,NC,In-Network
+PR0173,Cedar Specialists,Pediatrics,OH,In-Network
+PR0174,Prairie Health,Primary Care,GA,In-Network
+PR0175,Golden Group,Cardiology,FL,In-Network
+PR0176,Summit Care,Radiology,PA,In-Network
+PR0177,Horizon Regional Hospital,Hospital,GA,In-Network
+PR0178,Lakeshore Memorial Hospital,Hospital,IL,In-Network
+PR0179,Liberty Health, BEHAVIORAL HEALTH ,TX,Out-of-Network
+PR0180,Willow Group,Emergency Medicine,TX,Out-of-Network
+PR0181,Unity Specialists, BEHAVIORAL HEALTH ,TX,In-Network
+PR0182,Maple Care,Orthopedics,NY,Out-of-Network
+PR0183,Palm Specialists,Primary Care,AZ,Out-of-Network
+PR0184,Magnolia Care,Pediatrics,GA,In-Network
+PR0185,Riverside Clinic,Orthopedics,CA,In-Network
+PR0186,Palm Regional Hospital,Hospital,GA,Out-of-Network
+PR0187,Northgate Partners,Behavioral Health,FL,In-Network
+PR0188,Liberty Memorial Hospital,Hospital,GA,In-Network
+PR0189,Maple Medical,Pediatrics,CA,Out-of-Network
+PR0190,Magnolia Specialists,Primary Care,CA,In-Network
+PR0191,Bayview Memorial Hospital,Hospital,GA,In-Network
+PR0192,Coastal Center,Cardiology,AZ,In-Network
+PR0193,Golden Partners,Oncology,TX,In-Network
+PR0194,Liberty Clinic,Primary Care,PA,Out-of-Network
+PR0195,Cypress Regional Hospital,Hospital,FL,In-Network
+PR0196,Crescent Care,Primary Care,NC,In-Network
+PR0197,Heritage Memorial Hospital,Hospital,TX,In-Network
+PR0198,Unity Partners,Primary Care,NY,Out-of-Network
+PR0199,Sunrise Specialists,Primary Care,PA,In-Network
+PR0200,Keystone Specialists,Emergency Medicine,NC,Out-of-Network
+PR0201,Pinecrest Partners,Cardiology,TX,In-Network
+PR0202,Magnolia Health,Pediatrics,NC,Out-of-Network
+PR0203,Golden Clinic,Behavioral Health,TX,In-Network
+PR0204,Magnolia Partners,Pediatrics,FL,Out-of-Network
+PR0205,Crescent Health,Pediatrics,NC,In-Network
+PR0206,Harbor Group,Primary Care,IL,In-Network
+PR0207,Coastal Partners,Oncology,FL,In-Network
+PR0208,Keystone Medical,Primary Care,NC,In-Network
+PR0209,Pinecrest Medical,Emergency Medicine,PA,In-Network
+PR0210,Brookside Center,Emergency Medicine,CA,In-Network
+PR0211,Sunrise Care,Pediatrics,NY,In-Network
+PR0212,Golden Specialists,Oncology,GA,Out-of-Network
+PR0213,Cedar Medical, BEHAVIORAL HEALTH ,FL,In-Network
+PR0214,Cypress Medical,Radiology,TX,In-Network
+PR0215,Crescent Center, ORTHOPEDICS ,CA,In-Network
+PR0216,Golden Center,Radiology,TX,In-Network
+PR0217,Cypress Group,Primary Care,NY,In-Network
+PR0218,Riverside Associates,Orthopedics,CA,In-Network
+PR0219,Prairie Group, PRIMARY CARE ,GA,Out-of-Network
+PR0220,Harbor General Hospital,Hospital,OH,In-Network
+PR0221,Heritage Specialists,Cardiology,CA,In-Network
+PR0222,Oakwood Center,Behavioral Health,CA,In-Network
+PR0223,Sunrise Center,Orthopedics,NY,In-Network
+PR0224,Evergreen Health,Primary Care,TX,In-Network
+PR0225,Valley Specialists,Primary Care,CA,In-Network
+PR0226,Northgate Group,Pediatrics,OH,In-Network
+PR0227,Golden Health, RADIOLOGY ,NC,In-Network
+PR0228,Evergreen Specialists,Behavioral Health,NC,Out-of-Network
+PR0229,Summit Associates,Primary Care,GA,Out-of-Network
+PR0230,Liberty Medical,Orthopedics,OH,Out-of-Network
+PR0231,Unity Care,Cardiology,TX,In-Network
+PR0232,Meadow Care, BEHAVIORAL HEALTH ,GA,In-Network
+PR0233,Prairie Care,Cardiology,FL,Out-of-Network
+PR0234,Silver Regional Hospital,Hospital,PA,In-Network
+PR0235,Willow Medical,Orthopedics,CA,In-Network
+PR0236,Oakwood Medical,Orthopedics,PA,Out-of-Network
+PR0237,Palm Medical,Radiology,CA,Out-of-Network
+PR0238,Bayview Clinic,Emergency Medicine,PA,In-Network
+PR0239,Meadow Clinic,Orthopedics,CA,In-Network
+PR0240,Liberty Partners, PRIMARY CARE ,CA,In-Network
+PR0241,Northgate Health,Primary Care,FL,In-Network
+PR0242,Evergreen Partners,Cardiology,NC,In-Network
+PR0243,Lakeshore Specialists,Radiology,CA,In-Network
+PR0244,Crescent Medical,Radiology,GA,In-Network
+PR0245,Palm Partners, PEDIATRICS ,FL,In-Network
+PR0246,Highland Medical,Primary Care,TX,Out-of-Network
+PR0247,Crescent Group,Behavioral Health,FL,In-Network
+PR0248,Evergreen Care,Behavioral Health,CA,In-Network
+PR0249,Palm Health,Emergency Medicine,CA,Out-of-Network
+PR0250,Palm Group,Radiology,IL,In-Network
