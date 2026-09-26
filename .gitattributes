@@ -1,0 +1,6 @@
+# Notebooks embed chart images, which GitHub counts as code and which would outweigh the .py files.
+# Mark them as documentation so the repo language reflects the Python source.
+*.ipynb linguist-documentation
+
+# Generated query output is not source code
+SQL/query_results.md linguist-generated
