@@ -56,14 +56,6 @@ They asked four questions:
 
 ---
 
-## Charts
-
-| | |
-|---|---|
-| ![](Image/02_denial_rate_trend.png) | ![](Image/03_denials_by_reason.png) |
-| ![](Image/04_network_plan_denials.png) | ![](Image/05_provider_outliers.png) |
-| ![](Image/06_paid_by_specialty.png) | ![](Image/07_processing_time.png) |
-
 ## Power BI dashboard
 
 A 4-page report saved as a **Power BI Project (`.pbip`)** and generated from code
@@ -95,6 +87,14 @@ and all 44 DAX measures can be read on GitHub.
 ![Excel dashboard](Image/excel_dashboard.png)
 To open: `dashboard/Healthcare_Claims.pbip` in Power BI Desktop. If you cloned to a different folder,
 set the `DataFolder` parameter (**Transform data → Edit parameters**) to your `Data\clean\` path, then **Refresh**.
+
+## Python charts (exploratory analysis notebook)
+
+| | |
+|---|---|
+| ![](Image/02_denial_rate_trend.png) | ![](Image/03_denials_by_reason.png) |
+| ![](Image/04_network_plan_denials.png) | ![](Image/05_provider_outliers.png) |
+| ![](Image/06_paid_by_specialty.png) | ![](Image/07_processing_time.png) |
 
 ---
 
