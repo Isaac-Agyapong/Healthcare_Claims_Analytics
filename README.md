@@ -1,7 +1,12 @@
 # Healthcare Claims Analytics: Where Is Claim Revenue Being Lost?
 
-End-to-end data analysis of **50,000 health-insurance claims (2024–2025)** using **Python, SQL, Excel and Power BI**.
-The project finds why claims are denied, which providers and plans drive the problem, and how much money is at stake.
+An analysis of **50,000 health insurance claims (2024–2025)** built with **Python, SQL, Excel and Power BI**.
+
+> **In short:** a health plan was losing money to denied claims and didn't know where to start.
+> This project found that **$19.2 million** in charges were denied, that denials for missing pre-approval
+> (prior authorization) **nearly doubled in one year**, that out-of-network claims are denied **about twice as often**,
+> and that three providers make far more billing errors than their peers. It ends with four practical fixes.
+> The claims are realistic sample data, not real patients.
 
 ![Power BI dashboard](Image/powerbi_page1.png)
 
@@ -37,6 +42,8 @@ They asked four questions:
 ---
 
 ## Tools and what each one does
+
+*The sections below go into technical detail.*
 
 | Stage | Tool | Output |
 |---|---|---|
