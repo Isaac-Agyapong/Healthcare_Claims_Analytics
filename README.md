@@ -1,101 +1,113 @@
 # Healthcare Claims Analytics: Where Is Claim Revenue Being Lost?
 
-An analysis of **50,000 health insurance claims (2024–2025)** built with **Python, SQL, Excel and Power BI**.
+A health plan was losing money to denied claims and didn't know where to start. I analysed 50,000 health insurance
+claims from 2024 and 2025 to find out where the money goes and what would fix it. I used Python, SQL, Excel and
+Power BI.
 
-> **In short:** a health plan was losing money to denied claims and didn't know where to start.
-> This project found that **$19.2 million** in charges were denied, that denials for missing pre-approval
-> (prior authorization) **nearly doubled in one year**, that out-of-network claims are denied **about twice as often**,
-> and that three providers make far more billing errors than their peers. It ends with four practical fixes.
-> The claims are realistic sample data, not real patients.
+> **In short:** $19.2 million in charges were denied. Denials because the provider didn't get approval from the plan
+> before treatment (called "prior authorization") **nearly doubled in one year**. Claims from providers outside the
+> plan's network are denied **about twice as often**, and three providers make far more billing errors than others
+> like them. The project ends with four practical fixes.
+>
+> **The claims are realistic sample data I generated, not real patients.**
 
 ![Power BI dashboard](Image/powerbi_page1.png)
 
----
-
-## Business problem
-
-A health plan's payer-relations team sees denied claims rising but can't say where to act first.
-They asked four questions:
-
-1. How much billed revenue is being denied, and is it getting worse?
-2. **Why** are claims denied?
-3. **Which** providers, plans and network arrangements drive denials?
-4. Which fixes would recover the most money?
-
-## Key findings
-
-| | Finding | Evidence |
-|---|---|---|
-| 💰 | **$19.2M of billed charges (13.8%) were denied**; overall denial rate 12.2%. | SQL Q1 |
-| 📈 | **Missing prior-authorization denials almost doubled (+99%) from 2024 to 2025** and are now the #1 reason, at 34% of denied dollars. Inpatient denial rates climbed from about 12–15% in 2024 to about 20% by late 2025. | SQL Q3–Q4, chart 2–3 |
-| 🌐 | **Out-of-network claims are denied about 2x as often** (20–25% vs 9–12%), on every plan type. | SQL Q5, chart 4 |
-| 🏥 | **3 providers sit 19–25 points above their peer group**, driven by coding errors and duplicate claims. | SQL Q6–Q7, chart 5 |
-| ⏱️ | **Claims submitted more than 90 days after service are always denied** (timely filing: $1.6M, all preventable). Denied claims also take **23 vs 13 days** to resolve. | SQL Q11–Q12, chart 7 |
-
-## Recommendations
-
-1. **Prior-auth check at scheduling** for inpatient and imaging services, the biggest and fastest-growing leak (~$6.4M).
-2. **Billing audit and education for the 3 flagged providers**; a claim scrubber catches coding and duplicate errors before submission.
-3. **Steer referrals in-network** and target recruiting at high-volume out-of-network specialties.
-4. **Alert at 60 days** for any service not yet submitted, which removes timely-filing denials entirely.
+The rest of this page has the details.
 
 ---
 
-## Tools and what each one does
+## Dashboard
 
-*The sections below go into technical detail.*
+A Power BI report with four pages, with year and plan filters on every page. An Excel version is included too.
 
-| Stage | Tool | Output |
-|---|---|---|
-| Data generation | Python (NumPy, pandas) | [`Python/generate_data.py`](Python/generate_data.py): realistic claims with built-in data-quality problems |
-| Cleaning | Python (pandas, Jupyter) | [`01_data_cleaning.ipynb`](Python/01_data_cleaning.ipynb): deduplication, mixed date formats, imputation, 10 validation checks |
-| Exploratory analysis | Python (matplotlib) | [`02_exploratory_analysis.ipynb`](Python/02_exploratory_analysis.ipynb): 7 charts and findings |
-| Database and analysis | SQL (SQLite) | [`SQL/`](SQL/): star schema, data-quality checks, 13 business queries → [results](SQL/query_results.md) |
-| Spreadsheet model | Excel | [`Excel/Healthcare_Claims_Analysis.xlsx`](Excel/Healthcare_Claims_Analysis.xlsx): formula-driven dashboard, provider scorecard, conditional formatting |
-| BI dashboard | Power BI (DAX, TMDL, PBIR) | [`dashboard/`](dashboard/): 4-page interactive report saved as a Power BI Project, generated from code |
+**Executive summary:** the main numbers, the denial rate each quarter, denied dollars by reason, and claim status
+(shown above).
 
-**SQL skills shown:** multi-table JOINs, CTEs, CASE, conditional aggregation, window functions
-(`LAG`, `SUM() OVER`, `AVG() OVER (PARTITION BY)`, `ROW_NUMBER`, `DENSE_RANK`, `NTILE`), and a median calculated without a MEDIAN function.
-
-**Excel skills shown:** `COUNTIFS` / `SUMIFS` / `AVERAGE`, running YTD totals, structured tables, data bars, colour scales, auto-filter, charts.
-
-**Power BI skills shown:** star-schema model, Power Query (M) with a folder parameter, marked date table, time intelligence (`TOTALYTD`), peer benchmarking with `CALCULATE` / `REMOVEFILTERS`, dynamic Top N with `RANKX`, conditional formatting driven by a measure, and a version-controlled PBIP project.
-
----
-
-## Power BI dashboard
-
-A 4-page report saved as a **Power BI Project (`.pbip`)** and generated from code
-([`Python/build_powerbi_project.py`](Python/build_powerbi_project.py)), so the model (TMDL), every visual (PBIR JSON)
-and all 44 DAX measures can be read on GitHub.
-
-**Design choices**
-- Dark "command centre" theme: deep-navy background with a generated network-of-nodes pattern
-  ([`Python/make_background.py`](Python/make_background.py)), dark glass tiles, KPI cards that glow in their meaning colour,
-  and pill-shaped page navigation.
-- A headline sentence on every page that states the finding, and a context line on every KPI card.
-- One colour, one meaning: **cyan** = claims and payments, **rose** = denials and revenue at risk,
-  **gold** = flagged providers, slate = everything else.
-- Year and plan-type filters on every analysis page; rankings are protected from cross-filtering so they always rank all providers.
-
-**Executive summary**: KPIs, quarterly denial rate, denied dollars by reason, claim status
-![Executive summary](Image/powerbi_page1.png)
-
-**Denial drivers**: prior-auth denials by quarter, plan × network denial rates, denials by reason 2024 vs 2025
+**Why claims are denied:** prior authorization denials by quarter, denial rates by plan and network, and reasons in
+2024 against 2025.
 ![Denial drivers](Image/powerbi_page2.png)
 
-**Provider scorecard**: providers ranked by points above their peer group (gold = 10+ points)
+**Provider scorecard:** providers ranked by how far their denial rate sits above similar providers.
 ![Provider scorecard](Image/powerbi_page3.png)
 
-**Data notes**
+**Data notes:** where the data comes from and what the words mean.
 ![Data notes](Image/powerbi_page4.png)
 
-**Excel version** of the dashboard (formula-driven):
+**Excel version** (built with live formulas):
 ![Excel dashboard](Image/excel_dashboard.png)
-To open: `dashboard/Healthcare_Claims.pbip` in Power BI Desktop. If you cloned to a different folder,
-set the `DataFolder` parameter (**Transform data → Edit parameters**) to your `Data\clean\` path, then **Refresh**.
 
-## Python charts (exploratory analysis notebook)
+## The questions
+
+The plan's team saw denied claims rising but couldn't say where to act first. They asked:
+
+1. How much billed money is being denied, and is it getting worse?
+2. Why are claims denied?
+3. Which providers, plans and network arrangements cause the most denials?
+4. Which fixes would recover the most money?
+
+## What I found
+
+The query behind each number is in [SQL/query_results.md](SQL/query_results.md).
+
+| Finding | Query |
+|---|---|
+| $19.2 million of billed charges (13.8%) were denied. Overall, 12.2% of claims were denied. | 1 |
+| Denials for missing prior authorization almost doubled (up 99%) from 2024 to 2025. They are now the top reason, at 34% of denied dollars. | 3, 4 |
+| Hospital stays were denied about 12-15% of the time in 2024, rising to about 20% by late 2025. | 4 |
+| Claims from providers outside the network are denied about twice as often (20-25% against 9-12%), on every type of plan. | 5 |
+| Three providers have denial rates 19 to 25 points higher than similar providers, mostly because of coding mistakes and duplicate claims. | 6, 7 |
+| Claims sent more than 90 days after the visit are always denied ($1.6 million, all preventable). Denied claims also take 23 days to settle, against 13 for the rest. | 11, 12 |
+
+## What could help
+
+1. **Check for prior authorization when the visit is booked,** for hospital stays and imaging. This is the biggest
+   and fastest-growing loss (about $6.4 million).
+2. **Audit and train the three flagged providers,** and use software that checks claims for coding mistakes and
+   duplicates before they are sent.
+3. **Steer referrals to providers inside the network,** and recruit more providers in the specialties where patients
+   most often go outside it.
+4. **Send an alert at 60 days** for any visit that hasn't been billed yet. This would stop late-filing denials
+   completely.
+
+## The data
+
+| Table | Rows | One row per |
+|---|---|---|
+| claims | 50,000 | claim |
+| patients | 8,000 | member (plan type, age, state) |
+| providers | 250 | provider (specialty, in or out of network) |
+
+**The data is sample data, not real patients.** I generated it with [Python/generate_data.py](Python/generate_data.py).
+I built in the kinds of patterns real claims have (seasons, network effects, a prior authorization policy change and
+a few problem providers), so the same methods work on real data.
+
+I also built in the problems real data has, and fixed them in the cleaning notebook: 750 duplicate rows, two date
+formats, inconsistent codes ("F", "female", "Female"), and missing or negative billed amounts.
+
+## Technical details
+
+For readers who want the specifics:
+
+| Step | Tool | Output |
+|---|---|---|
+| Making the data | Python (NumPy, pandas) | [Python/generate_data.py](Python/generate_data.py) |
+| Cleaning | Python, Jupyter | [01_data_cleaning.ipynb](Python/01_data_cleaning.ipynb): removing duplicates, fixing dates, filling gaps, 10 checks |
+| Exploring | Python (matplotlib) | [02_exploratory_analysis.ipynb](Python/02_exploratory_analysis.ipynb): 7 charts |
+| Database and questions | SQL (SQLite) | [SQL/](SQL/): star schema, data checks, 13 questions and [results](SQL/query_results.md) |
+| Spreadsheet | Excel | [Excel/Healthcare_Claims_Analysis.xlsx](Excel/Healthcare_Claims_Analysis.xlsx): formula-driven dashboard and provider scorecard |
+| Dashboard | Power BI | [dashboard/](dashboard/): four pages, generated from code |
+
+- **SQL:** joins, CTEs, CASE, conditional sums, window functions (`LAG`, `SUM() OVER`, `AVG() OVER (PARTITION BY)`,
+  `ROW_NUMBER`, `DENSE_RANK`, `NTILE`), and a median worked out without a MEDIAN function.
+- **Excel:** `COUNTIFS`, `SUMIFS`, `AVERAGE`, running year-to-date totals, tables, data bars, colour scales, filters
+  and charts.
+- **Power BI:** star-schema model, Power Query with a folder setting, a date table, year-to-date measures
+  (`TOTALYTD`), comparison with similar providers (`CALCULATE`, `REMOVEFILTERS`), a Top N ranking (`RANKX`) and
+  colours driven by measures. The report is generated from code
+  ([Python/build_powerbi_project.py](Python/build_powerbi_project.py)), so all 44 DAX measures can be read on GitHub.
+
+### Charts from the analysis notebook
 
 | | |
 |---|---|
@@ -103,45 +115,31 @@ set the `DataFolder` parameter (**Transform data → Edit parameters**) to your 
 | ![](Image/04_network_plan_denials.png) | ![](Image/05_provider_outliers.png) |
 | ![](Image/06_paid_by_specialty.png) | ![](Image/07_processing_time.png) |
 
----
-
-## Data
-
-| Table | Rows | Grain |
-|---|---|---|
-| `claims` | 50,000 | one row per claim |
-| `patients` | 8,000 | one row per member (plan type, age, state) |
-| `providers` | 250 | one row per provider (specialty, network status) |
-
-The raw export intentionally contains the problems real data has: 750 duplicate rows, two date formats, inconsistent
-coding (`F` / `female` / `Female`), and missing and negative billed amounts. Each fix is documented in notebook 01.
-
-> **Note:** the data is **synthetic**, generated by `Python/generate_data.py` with a fixed seed. No real patient
-> information is used. The patterns (seasonality, network effects, a prior-auth policy change, problem providers)
-> were modelled on common real-world claims issues so the analysis techniques transfer directly.
-
-## Project structure
+### Files
 
 ```
-Healthcare_Claims_Analytics/
-├── Data/
-│   ├── raw/                 # messy source files
-│   └── clean/               # analysis-ready CSVs (used by SQL, Excel, Power BI)
-├── Python/                  # generator, notebooks, SQL loader, Excel builder
-├── SQL/                     # schema, data-quality checks, business queries, results
-├── Excel/                   # formula-driven workbook
-├── dashboard/               # Power BI project (.pbip), model, report and DAX
-├── Image/                   # charts and screenshots
-├── run_all.py               # rebuilds everything
-└── requirements.txt
+Data/raw/     the messy source files
+Data/clean/   cleaned files used by SQL, Excel and Power BI
+Python/       data generator, notebooks, database loader, Excel builder
+SQL/          tables, data checks, questions and results
+Excel/        formula-driven workbook
+dashboard/    Power BI project (Healthcare_Claims.pbip)
+Image/        charts and screenshots
+run_all.py    rebuilds everything
 ```
 
-## How to run
+### Run it yourself
 
 ```bash
 pip install -r requirements.txt
 python run_all.py
 ```
 
-This regenerates the data, runs both notebooks, builds `Data/claims.db`, runs every SQL query into
-`SQL/query_results.md`, and rebuilds the Excel workbook. Open the `.xlsx` in Excel; formulas calculate on open.
+This makes the data, runs both notebooks, builds the database, answers every SQL question and rebuilds the Excel
+workbook. To see the dashboard, open `dashboard/Healthcare_Claims.pbip` in Power BI Desktop. If you saved the
+project in a different folder, go to Transform data > Edit parameters, set `DataFolder` to your `Data\clean\`
+folder, then click Refresh.
+
+---
+
+Built by **Isaac Agyapong** · [GitHub](https://github.com/Isaac-Agyapong)
